@@ -10,7 +10,8 @@ import type { TranscriptEntry } from '@/lib/opencode/format';
 import type { FileDiff, Session, SessionStatus, Todo } from '@/lib/opencode/types';
 import type { PendingPermissionRequest, PendingQuestionAnswer, PendingQuestionRequest } from '@/lib/opencode/client';
 
-import { styles } from '@/components/chat/chat-view-styles';
+import { getChatViewStyles } from '@/components/chat/chat-view-styles';
+import { useFontScale } from '@/hooks/use-font-scale';
 import { STARTER_PROMPTS } from '@/components/chat/chat-view-utils';
 
 type Palette = typeof Colors.light;
@@ -87,6 +88,7 @@ export function ChatContent({
   speakingMessageId,
   status,
 }: ChatContentProps) {
+  const styles = getChatViewStyles(useFontScale());
   const [todosExpanded, setTodosExpanded] = useState(false);
   const transcriptRef = useRef<FlashListRef<TranscriptEntry>>(null);
   const shouldPositionInitialTranscriptRef = useRef(false);

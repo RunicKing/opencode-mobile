@@ -22,8 +22,10 @@ import {
   TextInput,
 } from 'react-native-paper';
 
+import { scaleTextSize } from '@/constants/appearance';
 import { Fonts } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 import type { Pty } from '@/lib/opencode/types';
 import { useOpencode } from '@/providers/opencode-provider';
 
@@ -31,6 +33,7 @@ export default function TerminalScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const outputRef = useRef<ScrollView>(null);
   const {
     activeProject,
@@ -218,7 +221,7 @@ export default function TerminalScreen() {
         </Appbar.Header>
 
         <ScrollView ref={outputRef} style={styles.output} contentContainerStyle={styles.outputContent} nestedScrollEnabled>
-          <Text testID="terminal-output" selectable style={[styles.outputText, { color: activeTerminalId ? palette.text : palette.muted }]}> 
+          <Text testID="terminal-output" selectable style={[styles.outputText, { color: activeTerminalId ? palette.text : palette.muted, fontSize: scaleTextSize(14, fontScale), lineHeight: scaleTextSize(21, fontScale) }]}>
             {activeTerminalId ? terminalOutput || 'Connected. Waiting for output...' : 'Open or create a terminal to begin.'}
           </Text>
         </ScrollView>

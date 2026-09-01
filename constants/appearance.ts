@@ -59,6 +59,10 @@ export function clampFontScale(value: number) {
   return Math.min(FONT_SCALE_MAX, Math.max(FONT_SCALE_MIN, value));
 }
 
+export function scaleTextSize(basePx: number, fontScale: number) {
+  return Math.round(basePx * fontScale);
+}
+
 export function getAccentPalette(colorScheme: 'light' | 'dark', accentColor: AccentColorId) {
   const option = ACCENT_OPTIONS.find((item) => item.id === accentColor) ?? ACCENT_OPTIONS[0];
   return colorScheme === 'dark' ? option.dark : option.light;

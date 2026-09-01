@@ -13,7 +13,9 @@ import {
 
 import { Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { scaleTextSize } from '@/constants/appearance';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 
 export type NativeSelectOption<T extends string = string> = {
   value: T;
@@ -46,6 +48,7 @@ export function NativeSelect<T extends string>({
 }: NativeSelectProps<T>) {
   const colorScheme = useColorScheme() ?? 'light';
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const [visible, setVisible] = useState(false);
 
   const selectedOption = useMemo(
@@ -102,11 +105,11 @@ export function NativeSelect<T extends string>({
             <Pressable style={styles.backdrop} onPress={close} />
             <View style={[styles.sheet, { backgroundColor: palette.surface, borderColor: palette.border }]}> 
               <View style={[styles.sheetHeader, { borderBottomColor: palette.border }]}> 
-                <Text numberOfLines={1} style={[styles.sheetTitle, { color: palette.text }]}>
+                <Text numberOfLines={1} style={[styles.sheetTitle, { color: palette.text, fontSize: scaleTextSize(18, fontScale) }]}>
                   {title || 'Choose an option'}
                 </Text>
                 <Pressable onPress={close} style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}>
-                  <Text style={[styles.closeButtonLabel, { color: palette.tint }]}>Close</Text>
+                  <Text style={[styles.closeButtonLabel, { color: palette.tint, fontSize: scaleTextSize(15, fontScale) }]}>Close</Text>
                 </Pressable>
               </View>
               <ScrollView contentContainerStyle={styles.optionList} keyboardShouldPersistTaps="handled">
@@ -134,9 +137,9 @@ export function NativeSelect<T extends string>({
                           </View>
                         ) : null}
                         <View style={styles.optionTextWrap}>
-                          <Text style={[styles.optionLabel, { color: palette.text }]}>{option.label}</Text>
+                          <Text style={[styles.optionLabel, { color: palette.text, fontSize: scaleTextSize(16, fontScale) }]}>{option.label}</Text>
                           {option.description ? (
-                            <Text style={[styles.optionDescription, { color: palette.muted }]}>{option.description}</Text>
+                            <Text style={[styles.optionDescription, { color: palette.muted, fontSize: scaleTextSize(13, fontScale) }]}>{option.description}</Text>
                           ) : null}
                         </View>
                         {selected ? <MaterialCommunityIcons name="check" size={20} color={palette.tint} /> : null}

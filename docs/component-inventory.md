@@ -551,7 +551,13 @@ Used primarily by tab icons.
 
 ## `constants/theme.ts` and `constants/paper-theme.ts`
 
-`getColors(colorScheme, accentColor)` overrides tinted entries of the base palette with the selected accent; `getPaperTheme(...)` additionally scales typefaces by `fontScale`.
+`getColors(colorScheme, accentColor)` overrides tinted entries of the base palette with the selected accent; `getPaperTheme(...)` additionally scales the Paper typefaces by `fontScale`.
+
+### Theme and font scaling
+
+- `constants/m3-colors.ts` (RN-free, unit-tested by `tests/m3-colors.test.mjs`) provides the stock `MD3Colors` light/dark role sets plus pure color helpers (`hexToRgb`, `hslToHex`, `mixHex`, `deriveTertiaryAndInverseRoles`) so the Paper theme carries a full MD3 role color set (including `tertiary`, `inverseSurface`, `inversePrimary`) instead of a partial override map.
+- `getChatViewStyles(fontScale)` replaces the old static `styles`, so rows/cells built in `chat-view-styles.ts` scale with the chosen text size.
+- `useFontScale()` (in `hooks/use-font-scale.ts`) exposes the preference for components that apply `scaleTextSize(basePx, fontScale)` to their inline `fontSize`/`lineHeight` styles (chat cards, markdown, controls, overlays, native select, model picker, settings select fields, terminal, workspace, and tab labels).
 
 ## Provider And Utility Modules With UI Contracts
 

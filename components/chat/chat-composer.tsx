@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { Colors } from '@/constants/theme';
 import { ControlButton, SelectControl } from '@/components/chat/chat-controls';
 import { ModelPicker } from '@/components/chat/model-picker';
-import { styles } from '@/components/chat/chat-view-styles';
+import { getChatViewStyles } from '@/components/chat/chat-view-styles';
+import { useFontScale } from '@/hooks/use-font-scale';
 import { getAutoApproveIcon, REASONING_OPTIONS } from '@/components/chat/chat-view-utils';
 import type { AgentOption, ChatPreferences, ModelOption } from '@/providers/opencode-provider';
 import type { Command } from '@/lib/opencode/types';
@@ -71,6 +72,7 @@ export function ChatComposer({
   updateChatPreferences,
   visibleModels,
 }: ChatComposerProps) {
+  const styles = getChatViewStyles(useFontScale());
   const minInputHeight = 24;
   const maxInputHeight = 110;
   const hasComposerContent = Boolean(draft.trim()) || attachments.length > 0;

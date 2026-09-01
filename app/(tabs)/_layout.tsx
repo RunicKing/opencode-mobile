@@ -4,10 +4,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { scaleTextSize } from '@/constants/appearance';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 
 export default function TabLayout() {
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const insets = useSafeAreaInsets();
 
   return (
@@ -24,7 +27,7 @@ export default function TabLayout() {
           paddingBottom: Math.max(insets.bottom, 8),
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: scaleTextSize(12, fontScale),
           fontWeight: '600',
         },
         headerShown: false,

@@ -2,8 +2,10 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
+import { scaleTextSize } from '@/constants/appearance';
 import { Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useFontScale } from '@/hooks/use-font-scale';
 
 export function ConversationOverlay({
   connectionStatus,
@@ -21,6 +23,7 @@ export function ConversationOverlay({
   sessionTitle: string;
 }) {
   const colorScheme = useColorScheme() ?? 'light';
+  const fontScale = useFontScale();
   const orbScale = useRef(new Animated.Value(1)).current;
   const orbOpacity = useRef(new Animated.Value(0.9)).current;
 
@@ -64,7 +67,7 @@ export function ConversationOverlay({
               {sessionTitle}
             </Text>
           </View>
-          {connectionEmoji ? <Text style={styles.voiceOverlayConnectionEmoji}>{connectionEmoji}</Text> : null}
+          {connectionEmoji ? <Text style={[styles.voiceOverlayConnectionEmoji, { fontSize: scaleTextSize(26, fontScale), lineHeight: scaleTextSize(30, fontScale) }]}>{connectionEmoji}</Text> : null}
         </View>
 
         <View style={styles.voiceOverlayCenter}>
@@ -96,7 +99,7 @@ export function ConversationOverlay({
             buttonColor="#E8ECEA"
             textColor="#0F1715"
             contentStyle={styles.voiceOverlayDoneContent}
-            labelStyle={styles.voiceOverlayDoneLabel}
+            labelStyle={[styles.voiceOverlayDoneLabel, { fontSize: scaleTextSize(16, fontScale) }]}
             onPress={onStop}>
             Done
           </Button>

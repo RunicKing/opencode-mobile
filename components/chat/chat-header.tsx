@@ -9,7 +9,8 @@ import type { Session } from '@/lib/opencode/types';
 import { formatEstimatedCost, formatTokenCount, type SessionUsage } from '@/lib/opencode/usage';
 
 import { ConversationOverlay } from '@/components/chat/chat-overlay';
-import { styles } from '@/components/chat/chat-view-styles';
+import { getChatViewStyles } from '@/components/chat/chat-view-styles';
+import { useFontScale } from '@/hooks/use-font-scale';
 import type { ConversationPhase } from '@/providers/opencode-provider';
 
 type Palette = typeof Colors.light;
@@ -63,6 +64,7 @@ export function ChatHeader({
   latestAssistantTurnUsage,
   usage,
 }: ChatHeaderProps) {
+  const styles = getChatViewStyles(useFontScale());
   const [usageVisible, setUsageVisible] = useState(false);
   const usageLabel = usage.costStatus === 'pricing-unavailable' ? 'Pricing unavailable' : `Estimated API cost ${formatEstimatedCost(usage.cost)}`;
   const lastResponseLabel = latestAssistantTurnUsage

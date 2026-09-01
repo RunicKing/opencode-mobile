@@ -125,7 +125,7 @@ Current fields:
 - `accentColor` — one of the presets in `constants/appearance.ts` (`brand`, `ocean`, `violet`, `rose`, `amber`); `brand` matches the stock palette
 - `fontScale` — base text-size multiplier, clamped between `FONT_SCALE_MIN` (0.8) and `FONT_SCALE_MAX` (1.4)
 
-Appearance preferences are UI-only: they never affect prompts or protocol traffic. `accentColor` is applied to tinted colors through `getColors()` in `constants/theme.ts` (used by `useThemeColors()`), and `fontScale` scales typefaces inside `getPaperTheme()`. The palette and Paper theme are made available to components through the memoized `AppearancePreferencesContext` exported by the provider, so appearance changes re-render only the theme surface rather than the whole app.
+Appearance preferences are UI-only: they never affect prompts or protocol traffic. `accentColor` is applied to tinted colors through `getColors()` in `constants/theme.ts` (used by `useThemeColors()`), and the Paper theme derives a full MD3 color-role set from it (`constants/m3-colors.ts`). `fontScale` scales the Paper typefaces in `getPaperTheme()` and is applied to inline `fontSize`/`lineHeight` styles via `useFontScale()` and `scaleTextSize()`. The palette and Paper theme are made available to components through the memoized `AppearancePreferencesContext` exported by the provider, so appearance changes re-render only the theme surface rather than the whole app.
 
 `workspaceFiles`, selected file content, worktrees, and MCP status/config are server-derived and not persisted. Text edits remain local to the Workspace screen until the provider conflict-checks and saves them as a VCS patch.
 

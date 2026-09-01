@@ -5,6 +5,7 @@ import {
 } from 'react-native-paper';
 
 import type { AccentColorId } from '@/constants/appearance';
+import { mixHex, STOCK_MD3_ROLES_DARK, STOCK_MD3_ROLES_LIGHT, deriveTertiaryAndInverseRoles } from '@/constants/m3-colors';
 import { getColors } from '@/constants/theme';
 
 export function getPaperTheme(
@@ -27,32 +28,43 @@ export function getPaperTheme(
       ];
     }),
   ) as unknown as MD3Theme['fonts'];
+  const stock = colorScheme === 'dark' ? STOCK_MD3_ROLES_DARK : STOCK_MD3_ROLES_LIGHT;
+  const derived = deriveTertiaryAndInverseRoles(colorScheme, palette.tint);
+  const onAccentDark = '#08110F';
 
   return {
     ...base,
     roundness: 3,
     fonts,
     colors: {
-      ...base.colors,
+      ...stock,
       primary: palette.tint,
-      onPrimary: colorScheme === 'dark' ? '#08110F' : '#FFFFFF',
+      onPrimary: colorScheme === 'dark' ? onAccentDark : '#FFFFFF',
       primaryContainer: palette.surfaceAlt,
       onPrimaryContainer: palette.text,
       secondary: palette.accent,
-      onSecondary: colorScheme === 'dark' ? '#08110F' : '#FFFFFF',
+      onSecondary: colorScheme === 'dark' ? onAccentDark : '#FFFFFF',
       secondaryContainer: palette.surfaceAlt,
       onSecondaryContainer: palette.text,
+      tertiary: derived.tertiary,
+      onTertiary: derived.onTertiary,
+      tertiaryContainer: derived.tertiaryContainer,
+      onTertiaryContainer: derived.onTertiaryContainer,
       error: palette.danger,
-      background: palette.background,
-      onBackground: palette.text,
       surface: palette.surface,
-      onSurface: palette.text,
       surfaceVariant: palette.surfaceAlt,
+      surfaceDisabled: mixHex(palette.surface, palette.text, 0.12),
+      background: palette.background,
+      onSurface: palette.text,
       onSurfaceVariant: palette.muted,
+      onSurfaceDisabled: mixHex(palette.surface, palette.text, 0.38),
+      onBackground: palette.text,
       outline: palette.border,
       outlineVariant: palette.border,
+      inverseSurface: derived.inverseSurface,
+      inverseOnSurface: derived.inverseOnSurface,
+      inversePrimary: derived.inversePrimary,
       elevation: {
-        ...base.colors.elevation,
         level0: palette.background,
         level1: palette.surface,
         level2: palette.card,

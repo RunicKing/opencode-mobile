@@ -19,8 +19,10 @@ import {
   TextInput,
 } from 'react-native-paper';
 
+import { scaleTextSize } from '@/constants/appearance';
 import { Fonts } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 import { formatRelativeTime, getSessionSubtitle } from '@/lib/opencode/format';
 import type { Session } from '@/lib/opencode/types';
 import { useOpencode } from '@/providers/opencode-provider';
@@ -31,6 +33,7 @@ export default function WorkspaceScreen() {
   const { width } = useWindowDimensions();
   const compact = width < 700;
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const {
     activeProject,
     connection,
@@ -329,7 +332,7 @@ export default function WorkspaceScreen() {
                 </>
               ) : (
                 <>
-                  <Text selectable style={[styles.code, { color: palette.text }]}>{selectedWorkspaceFile.content.content}</Text>
+                  <Text selectable style={[styles.code, { color: palette.text, fontSize: scaleTextSize(12, fontScale) }]}>{selectedWorkspaceFile.content.content}</Text>
                   <Button
                     mode="outlined"
                     style={styles.selfStart}

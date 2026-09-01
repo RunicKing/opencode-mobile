@@ -5,7 +5,9 @@ import { Button, Card, Chip, Divider, IconButton, List, Surface, Text, TextInput
 
 import { MarkdownText } from '@/components/chat/chat-markdown';
 import { getDiffPalette, buildPatchDiff, buildCollapsedDiffBlocks } from '@/components/chat/chat-diff';
+import { scaleTextSize } from '@/constants/appearance';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 import type { PendingPermissionRequest, PendingQuestionAnswer, PendingQuestionRequest } from '@/lib/opencode/client';
 import { formatTimestamp, type TranscriptDetail, type TranscriptEntry } from '@/lib/opencode/format';
 import { summarizeTranscriptDetails } from '@/lib/opencode/transcript';
@@ -147,6 +149,7 @@ function QuestionRequestCard({
 
 export function SessionDiffCard({ diff, expanded, onPress }: { diff: FileDiff; expanded: boolean; onPress: () => void }) {
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const diffLines = useMemo(() => (expanded ? buildPatchDiff(diff.patch || '') : []), [diff.patch, expanded]);
   const diffBlocks = useMemo(() => (expanded ? buildCollapsedDiffBlocks(diffLines) : []), [diffLines, expanded]);
 
@@ -169,7 +172,7 @@ export function SessionDiffCard({ diff, expanded, onPress }: { diff: FileDiff; e
                 if (block.type === 'collapsed') {
                   return (
                     <View key={`${diff.file}-collapsed-${blockIndex}`} style={[styles.diffCollapsedRow, { backgroundColor: palette.background, borderColor: palette.border }]}> 
-                      <Text variant="bodySmall" style={[styles.code, { color: palette.muted }]}> 
+                      <Text variant="bodySmall" style={[styles.code, { color: palette.muted, fontSize: scaleTextSize(12, fontScale), lineHeight: scaleTextSize(18, fontScale) }]}>
                         ... {block.hiddenCount} unchanged line{block.hiddenCount === 1 ? '' : 's'}
                         {block.startLine && block.endLine ? ` (${block.startLine}-${block.endLine})` : ''}
                       </Text>
@@ -198,7 +201,7 @@ export function SessionDiffCard({ diff, expanded, onPress }: { diff: FileDiff; e
                       <Text style={[styles.diffMarker, { color: tone.accentColor || palette.muted }]}> 
                         {line.kind === 'added' ? '+' : line.kind === 'removed' ? '-' : ' '}
                       </Text>
-                      <Text variant="bodySmall" style={[styles.code, styles.diffLineText, { color: palette.text }]}> 
+                      <Text variant="bodySmall" style={[styles.code, styles.diffLineText, { color: palette.text, fontSize: scaleTextSize(12, fontScale), lineHeight: scaleTextSize(18, fontScale) }]}>
                         {line.text || ' '}
                       </Text>
                     </View>
@@ -217,6 +220,7 @@ export function SessionDiffCard({ diff, expanded, onPress }: { diff: FileDiff; e
 
 export function DiffCard({ detail, expanded, onPress }: { detail: Extract<TranscriptDetail, { kind: 'patch' }>; expanded: boolean; onPress: () => void }) {
   const palette = useThemeColors();
+  const fontScale = useFontScale();
 
   return (
     <List.Accordion
@@ -231,7 +235,7 @@ export function DiffCard({ detail, expanded, onPress }: { detail: Extract<Transc
       <View style={styles.diffAccordionBody}>
         <Divider style={styles.divider} />
         {expanded ? (
-          <Text variant="bodySmall" style={[styles.code, { color: palette.muted }]}>{detail.body}</Text>
+          <Text variant="bodySmall" style={[styles.code, { color: palette.muted, fontSize: scaleTextSize(12, fontScale), lineHeight: scaleTextSize(18, fontScale) }]}>{detail.body}</Text>
         ) : (
           <Text variant="bodySmall" style={{ color: palette.muted }}>Expand to load the patch preview.</Text>
         )}

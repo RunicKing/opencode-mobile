@@ -2,6 +2,9 @@ import { type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
+import { scaleTextSize } from '@/constants/appearance';
+import { useFontScale } from '@/hooks/use-font-scale';
+
 function renderInlineMarkdown(text: string, color: string, codeColor: string): ReactNode[] {
   const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).filter(Boolean);
 
@@ -31,6 +34,7 @@ function renderInlineMarkdown(text: string, color: string, codeColor: string): R
 }
 
 export function MarkdownText({ text, color, mutedColor }: { text: string; color: string; mutedColor: string }) {
+  const fontScale = useFontScale();
   const lines = text.split('\n');
   const blocks: ReactNode[] = [];
   let paragraph: string[] = [];
@@ -48,7 +52,7 @@ export function MarkdownText({ text, color, mutedColor }: { text: string; color:
         <Text
           key={`p-${blocks.length}`}
           variant="bodyLarge"
-          style={{ color, lineHeight: 26, flexShrink: 1, minWidth: 0 }}>
+          style={{ color, lineHeight: scaleTextSize(26, fontScale), flexShrink: 1, minWidth: 0 }}>
           {renderInlineMarkdown(content, color, mutedColor)}
         </Text>,
       );
@@ -63,7 +67,7 @@ export function MarkdownText({ text, color, mutedColor }: { text: string; color:
 
     blocks.push(
       <View key={`code-${blocks.length}`} style={styles.codeBlock}>
-        <Text variant="bodySmall" style={[styles.code, { color }]}>
+        <Text variant="bodySmall" style={[styles.code, { color, fontSize: scaleTextSize(12, fontScale), lineHeight: scaleTextSize(18, fontScale) }]}>
           {codeBlock.join('\n')}
         </Text>
       </View>,
@@ -107,7 +111,7 @@ export function MarkdownText({ text, color, mutedColor }: { text: string; color:
       blocks.push(
       <View key={`b-${blocks.length}`} style={styles.markdownBulletRow}>
           <Text style={{ color }}>{'\u2022'}</Text>
-          <Text variant="bodyLarge" style={[styles.markdownBulletText, { color, lineHeight: 26, flexShrink: 1, minWidth: 0 }]}> 
+          <Text variant="bodyLarge" style={[styles.markdownBulletText, { color, lineHeight: scaleTextSize(26, fontScale), flexShrink: 1, minWidth: 0 }]}>
             {renderInlineMarkdown(bullet[1], color, mutedColor)}
           </Text>
         </View>,

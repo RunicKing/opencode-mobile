@@ -9,8 +9,9 @@ import { ChatComposer } from '@/components/chat/chat-composer';
 import { ChatContent } from '@/components/chat/chat-content';
 import { ChatHeader } from '@/components/chat/chat-header';
 import { TopTab } from '@/components/chat/chat-controls';
-import { styles } from '@/components/chat/chat-view-styles';
+import { getChatViewStyles } from '@/components/chat/chat-view-styles';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 import { type TranscriptEntry } from '@/lib/opencode/format';
 import { getTranscriptActivityLabel, isTranscriptDisplayMessage } from '@/lib/opencode/transcript';
 import { speakText, stopSpeaking } from '@/lib/voice/speech-output';
@@ -19,6 +20,7 @@ import { useOpencode } from '@/providers/opencode-provider';
 
 export function ChatView() {
   const palette = useThemeColors();
+  const styles = getChatViewStyles(useFontScale());
   const insets = useSafeAreaInsets();
   const {
     activeSession,

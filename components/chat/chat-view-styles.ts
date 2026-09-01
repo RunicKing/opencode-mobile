@@ -2,7 +2,10 @@ import { Platform, StyleSheet } from 'react-native';
 
 import { Fonts } from '@/constants/theme';
 
-export const styles = StyleSheet.create({
+export function getChatViewStyles(fontScale: number) {
+  const text = (size: number) => Math.round(size * fontScale);
+
+  return StyleSheet.create({
   screen: { flex: 1 },
   header: { elevation: 0 },
   headerMain: { flex: 1, minWidth: 0, alignSelf: 'stretch', justifyContent: 'center' },
@@ -12,7 +15,7 @@ export const styles = StyleSheet.create({
   headerSessionAnchorPressed: { opacity: 0.82 },
   headerSessionContent: { flexDirection: 'row', alignItems: 'center', gap: 8, minWidth: 0, minHeight: 48, paddingRight: 4 },
   headerSessionTextWrap: { flex: 1, minWidth: 0 },
-  headerUsage: { fontFamily: Fonts.sans, fontSize: 11, marginTop: 1 },
+  headerUsage: { fontFamily: Fonts.sans, fontSize: text(11), marginTop: 1 },
   sessionPickerOverlay: { ...StyleSheet.absoluteFillObject },
   sessionPickerBackdrop: { ...StyleSheet.absoluteFillObject },
   sessionPickerBackdropFill: { flex: 1, backgroundColor: 'rgba(0,0,0,0.28)' },
@@ -20,14 +23,14 @@ export const styles = StyleSheet.create({
   sessionPickerHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1 },
   sessionPickerCloseButton: { minHeight: 36, justifyContent: 'center', paddingHorizontal: 10, borderRadius: 999 },
   sessionPickerCloseButtonPressed: { opacity: 0.82 },
-  sessionPickerCloseLabel: { fontFamily: Fonts.sans, fontSize: 15, fontWeight: '600' },
+  sessionPickerCloseLabel: { fontFamily: Fonts.sans, fontSize: text(15), fontWeight: '600' },
   sessionPickerList: { padding: 12, gap: 8, paddingBottom: 24 },
   sessionPickerItem: { borderRadius: 16, borderWidth: 1 },
   sessionPickerItemRow: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingHorizontal: 14, paddingVertical: 12 },
   sessionPickerItemIcon: { width: 32, height: 32, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   sessionPickerItemTextWrap: { flex: 1, gap: 2 },
-  sessionPickerItemTitle: { fontFamily: Fonts.sans, fontSize: 16 },
-  sessionPickerItemSubtitle: { fontFamily: Fonts.sans, fontSize: 13 },
+  sessionPickerItemTitle: { fontFamily: Fonts.sans, fontSize: text(16) },
+  sessionPickerItemSubtitle: { fontFamily: Fonts.sans, fontSize: text(13) },
   usageProvider: { borderWidth: 1, borderRadius: 14, gap: 8, padding: 12 },
   usageModel: { gap: 4, paddingLeft: 8 },
   usageRow: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between' },
@@ -68,7 +71,7 @@ export const styles = StyleSheet.create({
   // Keep input flexible but start very compact
   // Input text area: keep the text container small; inner padding provides the 4px top/bottom
   // Keep text vertically centered by default; multiline growth still allowed.
-  input: { flex: 1, minHeight: 24, maxHeight: 120, fontSize: 17, lineHeight: 22, marginHorizontal: -4, paddingVertical: 0, textAlignVertical: 'center' },
+  input: { flex: 1, minHeight: 24, maxHeight: 120, fontSize: text(17), lineHeight: text(22), marginHorizontal: -4, paddingVertical: 0, textAlignVertical: 'center' },
   inputContentCompact: { paddingHorizontal: 0, paddingTop: 0, paddingBottom: 0, fontFamily: Fonts.sans },
   controlsRow: { flexDirection: 'row', flexWrap: 'nowrap', gap: 6, paddingHorizontal: 0, alignItems: 'center', width: '100%' },
   attachmentRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 2 },
@@ -95,4 +98,5 @@ export const styles = StyleSheet.create({
   todoItemRow: { flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: 40 },
   todoStatusIcon: { margin: 0 },
   todoTextWrap: { flex: 1 },
-});
+  });
+}

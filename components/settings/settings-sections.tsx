@@ -13,8 +13,9 @@ import {
 
 import { NativeSelect, type NativeSelectOption } from '@/components/ui/native-select';
 import { renderProviderIcon } from '@/components/ui/provider-icon';
-import { ACCENT_OPTIONS, FONT_SCALE_MAX, FONT_SCALE_MIN, FONT_SCALE_STEP } from '@/constants/appearance';
+import { ACCENT_OPTIONS, FONT_SCALE_MAX, FONT_SCALE_MIN, FONT_SCALE_STEP, scaleTextSize } from '@/constants/appearance';
 import { Colors, Fonts, getColors } from '@/constants/theme';
+import { useFontScale } from '@/hooks/use-font-scale';
 import { formatTimestamp } from '@/lib/opencode/format';
 import type { NotificationDebugStatus } from '@/lib/notifications';
 import type { OpencodeConnectionSettings } from '@/lib/opencode/client';
@@ -167,6 +168,7 @@ export function AiDefaultsSection({
   onStartProviderConfiguration,
   palette,
 }: AiDefaultsSectionProps) {
+  const fontScale = useFontScale();
   const configuredModels = availableModels.filter((model) => configuredProviders.some((provider) => provider.id === model.providerID));
   const configuredProviderModels = configuredProviders
     .map((provider) => ({
@@ -208,7 +210,7 @@ export function AiDefaultsSection({
                       opacity: disabled ? 0.45 : pressed ? 0.82 : 1,
                     },
                   ]}>
-                  <NativeText style={[styles.inlineSelectButtonLabel, { color: palette.text }]}>Add provider</NativeText>
+                  <NativeText style={[styles.inlineSelectButtonLabel, { color: palette.text, fontSize: scaleTextSize(14, fontScale) }]}>Add provider</NativeText>
                 </Pressable>
               )}
             />
@@ -384,6 +386,7 @@ export function VoiceSection({
   selectedWorkingSound,
   updateChatPreferences,
 }: VoiceSectionProps) {
+  const fontScale = useFontScale();
   const responseScopeOptions: NativeSelectOption<ResponseScope>[] = RESPONSE_SCOPE_OPTIONS.map((option) => ({
     description: option.description,
     label: option.label,
@@ -442,15 +445,16 @@ export function VoiceSection({
         </List.Section>
         <TextInput mode="outlined" label="Speech locale" placeholder="en-US" value={chatPreferences.speechLocale || ''} autoCapitalize="none" autoCorrect={false} onChangeText={(value) => updateChatPreferences({ speechLocale: value.trim() || undefined })} />
         <HelperText type="info">Leave empty to use the system default language for voice input and playback.</HelperText>
-        <SettingSelectField label="Response scope" onValueChange={(value) => updateChatPreferences({ responseScope: value })} options={responseScopeOptions} palette={palette} selectedValue={selectedResponseScope.value} valueLabel={selectedResponseScope.label} />
+        <SettingSelectField label="Response scope" onValueChange={(value) => updateChatPreferences({ responseScope: value })} options={responseScopeOptions} palette={palette} selectedValue={selectedResponseScope.value} valueLabel={selectedResponseScope.label} fontScale={fontScale} />
         <HelperText type="info">{selectedResponseScope.description}</HelperText>
         <SettingSwitchRow description="End replies with a short recommendation when there is a clear next move." onValueChange={(value) => updateChatPreferences({ includeNextActions: value })} palette={palette} title="Simple next actions" value={chatPreferences.includeNextActions} />
         <NumericSlider label="Speech rate" minimum={0.5} maximum={1.5} step={0.1} value={chatPreferences.speechRate} valueLabel={`${chatPreferences.speechRate.toFixed(1)}x`} onValueChange={(speechRate) => updateChatPreferences({ speechRate })} palette={palette} />
-        <SettingSelectField label="Working sound" onValueChange={(value) => updateChatPreferences({ workingSoundVariant: value })} options={workingSoundOptions} palette={palette} selectedValue={selectedWorkingSound.value} valueLabel={selectedWorkingSound.label} />
+        <SettingSelectField label="Working sound" onValueChange={(value) => updateChatPreferences({ workingSoundVariant: value })} options={workingSoundOptions} palette={palette} selectedValue={selectedWorkingSound.value} valueLabel={selectedWorkingSound.label} fontScale={fontScale} />
         <HelperText type="info">{selectedWorkingSound.description}</HelperText>
         <NumericSlider label="Working sound volume" minimum={0} maximum={1} step={0.05} value={chatPreferences.workingSoundVolume} valueLabel={`${Math.round(chatPreferences.workingSoundVolume * 100)}%`} onValueChange={(workingSoundVolume) => updateChatPreferences({ workingSoundVolume })} palette={palette} />
         <SettingSelectField
           disabled={isRefreshingSpeechVoices}
+          fontScale={fontScale}
           label="Voice"
           onValueChange={(value) => {
             if (value === '__system__') {
@@ -618,6 +622,7 @@ function SettingSwitchRow({
 
 function SettingSelectField<T extends string>({
   disabled = false,
+  fontScale,
   label,
   onValueChange,
   options,
@@ -626,6 +631,7 @@ function SettingSelectField<T extends string>({
   valueLabel,
 }: {
   disabled?: boolean;
+  fontScale: number;
   label: string;
   onValueChange: (value: T) => void;
   options: NativeSelectOption<T>[];

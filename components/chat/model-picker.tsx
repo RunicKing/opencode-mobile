@@ -4,8 +4,10 @@ import { Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, Vi
 
 import { ControlButton } from '@/components/chat/chat-controls';
 import { renderProviderIcon } from '@/components/ui/provider-icon';
+import { scaleTextSize } from '@/constants/appearance';
 import { Fonts } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 import type { ModelOption } from '@/providers/opencode-provider';
 
 type ModelPickerProps = {
@@ -22,6 +24,7 @@ function getSelectedModelLabel(models: ModelOption[], selectedModelId?: string) 
 
 export function ModelPicker({ disabled = false, models, onSelect, selectedModelId }: ModelPickerProps) {
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const [visible, setVisible] = useState(false);
   const [query, setQuery] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -92,9 +95,9 @@ export function ModelPicker({ disabled = false, models, onSelect, selectedModelI
           <Pressable accessibilityLabel="Close model picker" style={styles.backdrop} onPress={close} />
           <View style={[styles.sheet, { backgroundColor: palette.surface, borderColor: palette.border }]}>
               <View style={[styles.header, { borderBottomColor: palette.border }]}>
-                <Text style={[styles.title, { color: palette.text }]}>Choose model</Text>
+                <Text style={[styles.title, { color: palette.text, fontSize: scaleTextSize(18, fontScale) }]}>Choose model</Text>
                 <Pressable accessibilityRole="button" onPress={close} style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}>
-                  <Text style={[styles.closeLabel, { color: palette.tint }]}>Close</Text>
+                  <Text style={[styles.closeLabel, { color: palette.tint, fontSize: scaleTextSize(15, fontScale) }]}>Close</Text>
                 </Pressable>
               </View>
               <View style={[styles.searchShell, { backgroundColor: palette.background, borderColor: palette.border }]}>
@@ -105,7 +108,7 @@ export function ModelPicker({ disabled = false, models, onSelect, selectedModelI
                   clearButtonMode="while-editing"
                   placeholder="Search models or providers"
                   placeholderTextColor={palette.muted}
-                  style={[styles.searchInput, { color: palette.text }]}
+                  style={[styles.searchInput, { color: palette.text, fontSize: scaleTextSize(16, fontScale) }]}
                   testID="chat-model-picker-search"
                   value={query}
                   onChangeText={setQuery}
@@ -118,7 +121,7 @@ export function ModelPicker({ disabled = false, models, onSelect, selectedModelI
                       <View style={[styles.groupIcon, { backgroundColor: `${palette.tint}14` }]}>
                         {renderProviderIcon(group.providerID, 18, palette.tint)}
                       </View>
-                      <Text style={[styles.groupTitle, { color: palette.text }]}>{group.label}</Text>
+                      <Text style={[styles.groupTitle, { color: palette.text, fontSize: scaleTextSize(16, fontScale) }]}>{group.label}</Text>
                     </View>
                     {group.models.map((model) => {
                       const isSelected = model.id === selectedModelId;
@@ -133,8 +136,8 @@ export function ModelPicker({ disabled = false, models, onSelect, selectedModelI
                             pressed && styles.pressed,
                           ]}>
                           <View style={styles.optionText}>
-                            <Text style={[styles.optionLabel, { color: palette.text }]}>{model.label}</Text>
-                            <Text style={[styles.optionDescription, { color: palette.muted }]}>{model.modelID}{model.supportsReasoning ? ' · Reasoning supported' : ' · Standard model'}</Text>
+                            <Text style={[styles.optionLabel, { color: palette.text, fontSize: scaleTextSize(16, fontScale) }]}>{model.label}</Text>
+                            <Text style={[styles.optionDescription, { color: palette.muted, fontSize: scaleTextSize(13, fontScale) }]}>{model.modelID}{model.supportsReasoning ? ' · Reasoning supported' : ' · Standard model'}</Text>
                           </View>
                           {isSelected ? <MaterialCommunityIcons name="check" size={20} color={palette.tint} /> : null}
                         </Pressable>
@@ -144,8 +147,8 @@ export function ModelPicker({ disabled = false, models, onSelect, selectedModelI
                 ))}
                 {matchingModels.length === 0 ? (
                   <View style={styles.empty}>
-                    <Text style={[styles.emptyTitle, { color: palette.text }]}>No matching models</Text>
-                    <Text style={[styles.emptyBody, { color: palette.muted }]}>Try a model or provider name.</Text>
+                    <Text style={[styles.emptyTitle, { color: palette.text, fontSize: scaleTextSize(16, fontScale) }]}>No matching models</Text>
+                    <Text style={[styles.emptyBody, { color: palette.muted, fontSize: scaleTextSize(14, fontScale) }]}>Try a model or provider name.</Text>
                   </View>
                 ) : null}
               </ScrollView>

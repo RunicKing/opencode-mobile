@@ -4,7 +4,9 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import { NativeSelect, type NativeSelectOption } from '@/components/ui/native-select';
 import { Fonts } from '@/constants/theme';
+import { scaleTextSize } from '@/constants/appearance';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { useFontScale } from '@/hooks/use-font-scale';
 
 export function SelectControl<T extends string>({
   disabled = false,
@@ -78,6 +80,7 @@ export function ControlButton({
   testID?: string;
 }) {
   const palette = useThemeColors();
+  const fontScale = useFontScale();
   const textColor = active ? palette.tint : palette.text;
   const borderColor = active ? 'transparent' : palette.border;
   const backgroundColor = active ? `${palette.tint}18` : palette.surface;
@@ -100,7 +103,7 @@ export function ControlButton({
         {!loading && icon ? icon({ size: 16, color: textColor }) : null}
         {!loading && !icon && iconName ? <MaterialCommunityIcons name={iconName} size={16} color={textColor} /> : null}
         {!iconOnly ? (
-          <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.controlButtonLabel, { color: textColor }]}>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.controlButtonLabel, { color: textColor, fontSize: scaleTextSize(14, fontScale) }]}>
             {children}
           </Text>
         ) : null}
@@ -111,11 +114,12 @@ export function ControlButton({
 
 export function TopTab({ active, label, onPress }: { active: boolean; label: string; onPress: () => void }) {
   const palette = useThemeColors();
+  const fontScale = useFontScale();
 
   return (
     <Pressable accessibilityRole="tab" style={styles.topTab} onPress={onPress}>
       <View style={[styles.topTabInner, active && { borderBottomColor: palette.tint, borderBottomWidth: 2 }]}> 
-        <Text style={[styles.topTabLabel, { color: active ? palette.text : palette.muted, fontWeight: active ? '700' : '500' }]}> 
+        <Text style={[styles.topTabLabel, { color: active ? palette.text : palette.muted, fontWeight: active ? '700' : '500', fontSize: scaleTextSize(16, fontScale) }]}>
           {label}
         </Text>
       </View>
