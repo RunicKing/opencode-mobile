@@ -69,8 +69,12 @@ export function formatTimestamp(value: number) {
   try {
     if (typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function') {
       return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
       }).format(value);
     }
   } catch {

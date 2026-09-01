@@ -4,7 +4,7 @@ import ts from 'typescript';
 
 const source = await readFile(new URL('../lib/opencode/format.ts', import.meta.url), 'utf8');
 const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 } }).outputText;
-const { getMessagePreview, toTranscriptEntry } = await import(`data:text/javascript,${encodeURIComponent(output)}`);
+const { getMessagePreview, toTranscriptEntry, formatTimestamp } = await import(`data:text/javascript,${encodeURIComponent(output)}`);
 const info = { id: 'message-1', role: 'assistant', sessionID: 'session-1', time: { created: 1 } };
 
 assert.equal(getMessagePreview({ info, parts: [{ type: 'reasoning', text: 'private reasoning' }, { type: 'text', text: 'Visible reply' }] }), 'Visible reply');
@@ -20,5 +20,10 @@ const toolAttachment = toTranscriptEntry({
   parts: [{ id: 'tool-2', type: 'tool', tool: 'capture', state: { status: 'completed', output: 'done', attachments: [{ type: 'file', mime: 'image/png', filename: 'result.png' }] } }],
 });
 assert.equal(toolAttachment.details[1].label, 'result.png');
+
+const evening = Date.parse('2026-09-01T22:22:00');
+const formatted = formatTimestamp(evening);
+assert.ok(!formatted.includes('22:22'), `expected 12-hour time, got: ${formatted}`);
+assert.match(formatted, /\b10:22\b/, `expected 10:22 PM-ish time, got: ${formatted}`);
 
 console.log('format tests passed');
