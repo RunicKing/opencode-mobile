@@ -2,22 +2,41 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Platform } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { getPaperTheme } from '@/constants/paper-theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { OpencodeProvider } from '@/providers/opencode-provider';
+import { OpencodeProvider, useAppearancePreferences } from '@/providers/opencode-provider';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
+function ThemedApp() {
   const colorScheme = useColorScheme();
-  const paperTheme = getPaperTheme(colorScheme === 'dark' ? 'dark' : 'light');
+  const scheme: 'light' | 'dark' = colorScheme === 'dark' ? 'dark' : 'light';
+  const { appearancePreferences } = useAppearancePreferences();
+  const paperTheme = useMemo(
+    () => getPaperTheme(scheme, appearancePreferences.accentColor, appearancePreferences.fontScale),
+    [appearancePreferences.accentColor, appearancePreferences.fontScale, scheme],
+  );
+
+  return (
+    <PaperProvider theme={paperTheme}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </PaperProvider>
+  );
+}
+
+export default function RootLayout() {
   const isE2EMode = Boolean(Constants.expoConfig?.extra?.e2eMode);
 
   useEffect(() => {
@@ -37,14 +56,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <OpencodeProvider>
-        <PaperProvider theme={paperTheme}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </PaperProvider>
+        <ThemedApp />
       </OpencodeProvider>
     </SafeAreaProvider>
   );

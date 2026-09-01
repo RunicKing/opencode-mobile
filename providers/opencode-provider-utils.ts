@@ -1,3 +1,4 @@
+import { clampFontScale, isAccentColorId, type AccentColorId } from '@/constants/appearance';
 import type { Agent, Config, Model } from '@/lib/opencode/types';
 
 export type ModelOption = {
@@ -62,6 +63,22 @@ export const defaultChatPreferences: ChatPreferences = {
   responseScope: 'brief',
   includeNextActions: true,
 };
+
+export type AppearancePreferences = {
+  accentColor: AccentColorId;
+  fontScale: number;
+};
+
+export const defaultAppearancePreferences: AppearancePreferences = {
+  accentColor: 'brand',
+  fontScale: 1,
+};
+
+export function normalizeAppearancePreferences(value: Partial<AppearancePreferences> | undefined): AppearancePreferences {
+  const accentColor = value && isAccentColorId(value.accentColor) ? value.accentColor : defaultAppearancePreferences.accentColor;
+  const fontScale = typeof value?.fontScale === 'number' ? clampFontScale(value.fontScale) : defaultAppearancePreferences.fontScale;
+  return { accentColor, fontScale };
+}
 
 export function getErrorMessage(error: unknown) {
   if (error instanceof Error) {

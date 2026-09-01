@@ -1,5 +1,7 @@
 import { Platform } from 'react-native';
 
+import { getAccentPalette, type AccentColorId } from '@/constants/appearance';
+
 const tintColorLight = '#0F8A6C';
 const tintColorDark = '#7AE7C0';
 
@@ -73,3 +75,17 @@ export const Fonts = Platform.select({
     display: "'Avenir Next', 'Segoe UI', 'Trebuchet MS', sans-serif",
   },
 });
+
+export type Palette = typeof Colors.light;
+
+export function getColors(colorScheme: 'light' | 'dark', accentColor: AccentColorId): Palette {
+  const accent = getAccentPalette(colorScheme, accentColor);
+  return {
+    ...Colors[colorScheme],
+    tint: accent.tint,
+    accent: accent.accent,
+    bubbleUser: accent.bubbleUser,
+    onBubbleUser: accent.onBubbleUser,
+    tabIconSelected: accent.tint,
+  };
+}

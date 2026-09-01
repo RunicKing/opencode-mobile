@@ -4,8 +4,8 @@ import { Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, Vi
 
 import { ControlButton } from '@/components/chat/chat-controls';
 import { renderProviderIcon } from '@/components/ui/provider-icon';
-import { Colors, Fonts } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Fonts } from '@/constants/theme';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import type { ModelOption } from '@/providers/opencode-provider';
 
 type ModelPickerProps = {
@@ -21,8 +21,7 @@ function getSelectedModelLabel(models: ModelOption[], selectedModelId?: string) 
 }
 
 export function ModelPicker({ disabled = false, models, onSelect, selectedModelId }: ModelPickerProps) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const [visible, setVisible] = useState(false);
   const [query, setQuery] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);

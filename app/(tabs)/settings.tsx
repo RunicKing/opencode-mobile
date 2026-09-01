@@ -17,11 +17,13 @@ import {
   TextInput,
 } from 'react-native-paper';
 
-import { Colors, Fonts } from '@/constants/theme';
+import { ACCENT_OPTIONS } from '@/constants/appearance';
+import { Fonts } from '@/constants/theme';
 import { ProviderConfigDialog } from '@/components/settings/provider-config-dialog';
 import { McpSection } from '@/components/settings/mcp-section';
 import {
   AiDefaultsSection,
+  AppearanceSection,
   ConnectionSection,
   DiagnosticsSection,
   NotificationsSection,
@@ -34,6 +36,7 @@ import {
   WORKING_SOUND_OPTIONS,
 } from '@/components/settings/settings-utils';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import {
   ensureNotificationPermissionsAsync,
   getNotificationDebugStatusAsync,
@@ -45,11 +48,12 @@ import { useOpencode } from '@/providers/opencode-provider';
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const {
     availableModels,
     availableProviders,
     addMcpServer,
+    appearancePreferences,
     chatPreferences,
     completeAutomaticProviderOAuth,
     completeProviderOAuth,
@@ -72,6 +76,7 @@ export default function SettingsScreen() {
     settings,
     setMcpServerEnabled,
     startMcpOAuth,
+    updateAppearancePreferences,
     updateChatPreferences,
     updateSettings,
   } = useOpencode();
@@ -253,6 +258,10 @@ export default function SettingsScreen() {
     () => WORKING_SOUND_OPTIONS.find((option) => option.value === chatPreferences.workingSoundVariant) || WORKING_SOUND_OPTIONS[0],
     [chatPreferences.workingSoundVariant],
   );
+  const selectedAccentLabel = useMemo(
+    () => ACCENT_OPTIONS.find((option) => option.id === appearancePreferences.accentColor)?.label || ACCENT_OPTIONS[0].label,
+    [appearancePreferences.accentColor],
+  );
   function resetProviderDialog() {
     setSelectedProviderId(undefined);
     setSelectedMethodIndex(0);
@@ -424,6 +433,9 @@ export default function SettingsScreen() {
               selectedWorkingSound={selectedWorkingSound}
               updateChatPreferences={updateChatPreferences}
             />
+          </List.Accordion>
+          <List.Accordion id="appearance" title="Appearance" description={`${selectedAccentLabel} • ${Math.round(appearancePreferences.fontScale * 100)}%`} titleStyle={{ color: palette.text }} descriptionStyle={{ color: palette.muted }} style={[styles.category, { backgroundColor: palette.surface, borderColor: palette.border }]}>
+            <AppearanceSection appearancePreferences={appearancePreferences} colorScheme={colorScheme} palette={palette} updateAppearancePreferences={updateAppearancePreferences} />
           </List.Accordion>
           <List.Accordion id="advanced" title="Advanced" description="MCP servers and diagnostics" titleStyle={{ color: palette.text }} descriptionStyle={{ color: palette.muted }} style={[styles.category, { backgroundColor: palette.surface, borderColor: palette.border }]}>
             <McpSection

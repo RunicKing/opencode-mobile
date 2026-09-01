@@ -7,6 +7,10 @@ export const RESPONSE_SCOPE_OPTIONS: { value: ResponseScope; label: string; desc
   { value: 'detailed', label: 'Detailed', description: 'Longer explanations and more supporting detail.' },
 ];
 
+export function formatFontScaleLabel(fontScale: number) {
+  return `${Math.round(fontScale * 100)}%`;
+}
+
 export const WORKING_SOUND_OPTIONS: { value: WorkingSoundVariant; label: string; description: string }[] = [
   { value: 'soft', label: 'Soft chime', description: 'Warm layered tone with a gentle pulse.' },
   { value: 'glass', label: 'Glass tone', description: 'Brighter, lighter ambient loop.' },

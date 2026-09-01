@@ -66,6 +66,7 @@ import {
 } from '@/lib/voice/working-sound';
 import {
   buildSystemPrompt,
+  defaultAppearancePreferences,
   defaultChatPreferences,
   getConfiguredProviderIds,
   getEnabledModelIds,
@@ -78,6 +79,8 @@ import {
   groupPendingRequestsBySession,
   isAutoApproveEnabled,
   mergePermissionConfig,
+  normalizeAppearancePreferences,
+  type AppearancePreferences,
 } from '@/providers/opencode-provider-utils';
 import {
   getConfiguredProviders,
@@ -156,6 +159,7 @@ import {
 
 export type {
   AgentOption,
+  AppearancePreferences,
   ChatPreferences,
   ConnectionState,
   ConversationPhase,
@@ -170,6 +174,10 @@ export type {
 } from '@/providers/opencode-provider-types';
 
 const OpencodeContext = createContext<OpencodeContextValue | null>(null);
+const AppearancePreferencesContext = createContext<{
+  appearancePreferences: AppearancePreferences;
+  updateAppearancePreferences: (patch: Partial<AppearancePreferences>) => void;
+} | null>(null);
 const ANSI_CSI_PATTERN = new RegExp('\\u001b\\[[0-?]*[ -/]*[@-~]', 'gi');
 
 export function OpencodeProvider({ children }: PropsWithChildren) {
@@ -210,6 +218,7 @@ export function OpencodeProvider({ children }: PropsWithChildren) {
   const [availableModels, setAvailableModels] = useState<ModelOption[]>([]);
   const [availableAgents, setAvailableAgents] = useState<AgentOption[]>([]);
   const [chatPreferences, setChatPreferences] = useState<ChatPreferences>(defaultChatPreferences);
+  const [appearancePreferences, setAppearancePreferences] = useState<AppearancePreferences>(defaultAppearancePreferences);
   const [lastSessionByProject, setLastSessionByProject] = useState<Record<string, string>>({});
   const [conversationPhase, setConversationPhase] = useState<ConversationPhase>('off');
   const [conversationSessionId, setConversationSessionId] = useState<string>();
@@ -267,12 +276,15 @@ export function OpencodeProvider({ children }: PropsWithChildren) {
   }, []);
 
   const { isHydrated } = useOpencodePersistence({
+    appearancePreferences,
+    defaultAppearancePreferences,
     defaultChatPreferences,
     defaultSettings: defaultConnectionSettings,
     activeProjectPath,
     chatPreferences,
     lastSessionByProject,
     setActiveProjectPath,
+    setAppearancePreferences,
     setChatPreferences,
     setLastSessionByProject,
     setSettings,
@@ -1301,6 +1313,10 @@ export function OpencodeProvider({ children }: PropsWithChildren) {
       };
     });
   }, [availableModels, availableProviders]);
+
+  const updateAppearancePreferences = useCallback((patch: Partial<AppearancePreferences>) => {
+    setAppearancePreferences((current) => normalizeAppearancePreferences({ ...current, ...patch }));
+  }, []);
 
   const configureProvider = useCallback(
     async (providerId: string) => {
@@ -2475,6 +2491,8 @@ export function OpencodeProvider({ children }: PropsWithChildren) {
       availableAgents,
       chatPreferences,
       updateChatPreferences,
+      appearancePreferences,
+      updateAppearancePreferences,
       conversation: {
         active: conversationActive,
         feedback: conversationFeedback,
@@ -2633,6 +2651,8 @@ export function OpencodeProvider({ children }: PropsWithChildren) {
       completeProviderOAuth,
       toggleConversationMode,
       updateChatPreferences,
+      appearancePreferences,
+      updateAppearancePreferences,
       updateSettings,
       commands,
       executeCommand,
@@ -2676,13 +2696,34 @@ export function OpencodeProvider({ children }: PropsWithChildren) {
     ],
   );
 
-  return <OpencodeContext.Provider value={contextValue}>{children}</OpencodeContext.Provider>;
+  const appearanceContextValue = useMemo(
+    () => ({
+      appearancePreferences,
+      updateAppearancePreferences,
+    }),
+    [appearancePreferences, updateAppearancePreferences],
+  );
+
+  return (
+    <AppearancePreferencesContext.Provider value={appearanceContextValue}>
+      <OpencodeContext.Provider value={contextValue}>{children}</OpencodeContext.Provider>
+    </AppearancePreferencesContext.Provider>
+  );
 }
 
 export function useOpencode() {
   const context = useContext(OpencodeContext);
   if (!context) {
     throw new Error('useOpencode must be used inside OpencodeProvider');
+  }
+
+  return context;
+}
+
+export function useAppearancePreferences() {
+  const context = useContext(AppearancePreferencesContext);
+  if (!context) {
+    throw new Error('useAppearancePreferences must be used inside OpencodeProvider');
   }
 
   return context;

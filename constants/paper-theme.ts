@@ -4,15 +4,34 @@ import {
   type MD3Theme,
 } from 'react-native-paper';
 
-import { Colors } from '@/constants/theme';
+import type { AccentColorId } from '@/constants/appearance';
+import { getColors } from '@/constants/theme';
 
-export function getPaperTheme(colorScheme: 'light' | 'dark'): MD3Theme {
-  const palette = Colors[colorScheme];
+export function getPaperTheme(
+  colorScheme: 'light' | 'dark',
+  accentColor: AccentColorId,
+  fontScale: number,
+): MD3Theme {
+  const palette = getColors(colorScheme, accentColor);
   const base = colorScheme === 'dark' ? MD3DarkTheme : MD3LightTheme;
+  const fonts = Object.fromEntries(
+    Object.entries(base.fonts).map(([variant, font]) => {
+      const scaled = font as { fontSize?: number; lineHeight?: number };
+      return [
+        variant,
+        {
+          ...font,
+          fontSize: typeof scaled.fontSize === 'number' ? Math.round(scaled.fontSize * fontScale) : scaled.fontSize,
+          lineHeight: typeof scaled.lineHeight === 'number' ? Math.round(scaled.lineHeight * fontScale) : scaled.lineHeight,
+        },
+      ];
+    }),
+  ) as unknown as MD3Theme['fonts'];
 
   return {
     ...base,
     roundness: 3,
+    fonts,
     colors: {
       ...base.colors,
       primary: palette.tint,

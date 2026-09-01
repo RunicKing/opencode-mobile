@@ -366,6 +366,7 @@ This is important to parity because the chat layout is intentionally dense and h
 - `AiDefaultsSection`
 - `NotificationsSection`
 - `VoiceSection`
+- `AppearanceSection`
 - `DiagnosticsSection`
 
 ### `ConnectionSection`
@@ -403,6 +404,15 @@ Responsibility:
 - edit response style settings that become system prompt hints
 - select working sound and speech voice
 - adjust speech rate and working-sound volume with touch sliders
+
+### `AppearanceSection`
+
+Responsibility:
+
+- pick the app accent color from the presets in `constants/appearance.ts`
+- adjust the base text size with a `NumericSlider` over `FONT_SCALE_MIN`–`FONT_SCALE_MAX`
+- render the selected accent label as helper text
+- write both values through `updateAppearancePreferences`
 
 ### `DiagnosticsSection`
 
@@ -453,7 +463,7 @@ Main relevant props:
 - response scope option definitions
 - working sound option definitions
 - provider marketing copy
-- provider marketing copy and settings option lists
+- font-scale label formatting for the appearance slider
 
 ## Shared UI Components
 
@@ -524,6 +534,24 @@ Used primarily by tab icons.
 ### Responsibility
 
 - custom bottom-tab button with iOS haptic feedback on press-in
+
+## `hooks/use-theme-colors.ts`
+
+### Responsibility
+
+- return the accent-aware palette for the current appearance (`getColors(colorScheme, appearancePreferences.accentColor)`)
+- consumed wherever the palette is required so tint surfaces follow the chosen accent color
+
+## `constants/appearance.ts`
+
+### Responsibility
+
+- define the RN-free accent presets (`ACCENT_OPTIONS`, `AccentColorId`), `getAccentPalette`, and font-scale bounds (`FONT_SCALE_MIN/MAX/STEP`, `clampFontScale`)
+- kept free of react-native imports so it is unit-testable with the node transpile harness in `tests/appearance.test.mjs`
+
+## `constants/theme.ts` and `constants/paper-theme.ts`
+
+`getColors(colorScheme, accentColor)` overrides tinted entries of the base palette with the selected accent; `getPaperTheme(...)` additionally scales typefaces by `fontScale`.
 
 ## Provider And Utility Modules With UI Contracts
 

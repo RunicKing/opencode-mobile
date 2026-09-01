@@ -29,6 +29,7 @@ import type { SessionMessageRecord, TranscriptEntry } from '@/lib/opencode/forma
 import type { SessionUsage } from '@/lib/opencode/usage';
 import type {
   AgentOption as ProviderAgentOption,
+  AppearancePreferences as ProviderAppearancePreferences,
   ChatPreferences as ProviderChatPreferences,
   ModelOption as ProviderModelOption,
   ReasoningLevel as ProviderReasoningLevel,
@@ -36,6 +37,7 @@ import type {
 } from '@/providers/opencode-provider-utils';
 
 export type AgentOption = ProviderAgentOption;
+export type AppearancePreferences = ProviderAppearancePreferences;
 export type ChatPreferences = ProviderChatPreferences;
 export type ModelOption = ProviderModelOption;
 export type ReasoningLevel = ProviderReasoningLevel;
@@ -129,6 +131,8 @@ export type OpencodeContextValue = {
   availableAgents: AgentOption[];
   chatPreferences: ChatPreferences;
   updateChatPreferences: (patch: Partial<ChatPreferences>) => void;
+  appearancePreferences: AppearancePreferences;
+  updateAppearancePreferences: (patch: Partial<AppearancePreferences>) => void;
   conversation: ConversationState;
   clearConversationFeedback: () => void;
   toggleConversationMode: () => Promise<void>;

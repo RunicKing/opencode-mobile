@@ -91,6 +91,7 @@ Primary fields:
 - `mcpStatuses`
 - `diagnostics`
 - `chatPreferences`
+- `appearancePreferences`
 
 ### `chatPreferences`
 
@@ -116,6 +117,15 @@ Current fields:
 - `includeNextActions`
 
 These values combine true application behavior settings and output-style preferences that are sent to the model as prompt instructions.
+
+### `appearancePreferences`
+
+Current fields:
+
+- `accentColor` — one of the presets in `constants/appearance.ts` (`brand`, `ocean`, `violet`, `rose`, `amber`); `brand` matches the stock palette
+- `fontScale` — base text-size multiplier, clamped between `FONT_SCALE_MIN` (0.8) and `FONT_SCALE_MAX` (1.4)
+
+Appearance preferences are UI-only: they never affect prompts or protocol traffic. `accentColor` is applied to tinted colors through `getColors()` in `constants/theme.ts` (used by `useThemeColors()`), and `fontScale` scales typefaces inside `getPaperTheme()`. The palette and Paper theme are made available to components through the memoized `AppearancePreferencesContext` exported by the provider, so appearance changes re-render only the theme surface rather than the whole app.
 
 `workspaceFiles`, selected file content, worktrees, and MCP status/config are server-derived and not persisted. Text edits remain local to the Workspace screen until the provider conflict-checks and saves them as a VCS patch.
 
@@ -175,6 +185,7 @@ Persisted values:
 
 - `opencode-mobile.settings`
 - `opencode-mobile.chat-preferences`
+- `opencode-mobile.appearance-preferences`
 - `opencode-mobile.active-project`
 - `opencode-mobile.last-session-by-project`
 - `opencode-mobile.pending-notification-sessions`
@@ -183,6 +194,7 @@ Hydration rules:
 
 - persisted settings are merged over default settings
 - persisted chat preferences are merged over defaults and current provider state
+- persisted appearance preferences are merged over defaults (accent id is validated and font scale clamped on update via `normalizeAppearancePreferences`)
 - active project path is restored if present
 - last-session map is restored if present
 - hydration failures are ignored and defaults are kept

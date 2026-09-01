@@ -4,30 +4,40 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import type { OpencodeConnectionSettings } from '@/lib/opencode/client';
 import {
   ACTIVE_PROJECT_STORAGE_KEY,
+  APPEARANCE_PREFERENCES_STORAGE_KEY,
   CHAT_PREFERENCES_STORAGE_KEY,
   LAST_SESSION_BY_PROJECT_STORAGE_KEY,
   SETTINGS_STORAGE_KEY,
 } from '@/lib/storage-keys';
-import type { ChatPreferences } from '@/providers/opencode-provider-utils';
+import type {
+  AppearancePreferences,
+  ChatPreferences,
+} from '@/providers/opencode-provider-utils';
 
 export function useOpencodePersistence({
+  appearancePreferences,
+  defaultAppearancePreferences,
   defaultChatPreferences,
   defaultSettings,
   activeProjectPath,
   chatPreferences,
   lastSessionByProject,
   setActiveProjectPath,
+  setAppearancePreferences,
   setChatPreferences,
   setLastSessionByProject,
   setSettings,
   settings,
 }: {
+  appearancePreferences: AppearancePreferences;
+  defaultAppearancePreferences: AppearancePreferences;
   defaultChatPreferences: ChatPreferences;
   defaultSettings: OpencodeConnectionSettings;
   activeProjectPath?: string;
   chatPreferences: ChatPreferences;
   lastSessionByProject: Record<string, string>;
   setActiveProjectPath: (value?: string) => void;
+  setAppearancePreferences: Dispatch<SetStateAction<AppearancePreferences>>;
   setChatPreferences: Dispatch<SetStateAction<ChatPreferences>>;
   setLastSessionByProject: Dispatch<SetStateAction<Record<string, string>>>;
   setSettings: Dispatch<SetStateAction<OpencodeConnectionSettings>>;
@@ -68,6 +78,16 @@ export function useOpencodePersistence({
           setLastSessionByProject(JSON.parse(storedLastSessionByProject) as Record<string, string>);
         }
 
+        const storedAppearancePreferences = await AsyncStorage.getItem(APPEARANCE_PREFERENCES_STORAGE_KEY);
+        if (storedAppearancePreferences) {
+          const parsed = JSON.parse(storedAppearancePreferences) as Partial<AppearancePreferences>;
+          setAppearancePreferences((current) => ({
+            ...defaultAppearancePreferences,
+            ...current,
+            ...parsed,
+          }));
+        }
+
       } catch {
         // Ignore hydration issues and keep defaults.
       } finally {
@@ -76,7 +96,7 @@ export function useOpencodePersistence({
     }
 
     void hydrateState();
-  }, [defaultChatPreferences, defaultSettings, setActiveProjectPath, setChatPreferences, setLastSessionByProject, setSettings]);
+  }, [defaultAppearancePreferences, defaultChatPreferences, defaultSettings, setActiveProjectPath, setAppearancePreferences, setChatPreferences, setLastSessionByProject, setSettings]);
 
   useEffect(() => {
     if (!isHydrated) {
@@ -114,6 +134,14 @@ export function useOpencodePersistence({
 
     void AsyncStorage.setItem(LAST_SESSION_BY_PROJECT_STORAGE_KEY, JSON.stringify(lastSessionByProject));
   }, [isHydrated, lastSessionByProject]);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    void AsyncStorage.setItem(APPEARANCE_PREFERENCES_STORAGE_KEY, JSON.stringify(appearancePreferences));
+  }, [appearancePreferences, isHydrated]);
 
   return { isHydrated };
 }

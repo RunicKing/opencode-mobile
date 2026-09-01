@@ -24,6 +24,7 @@ From `TESTING.md`, those gates include:
 - `npm run typecheck`
 - `npm run test:usage`
 - `npm run test:format`
+- `npm run test:appearance`
 - `npm run test:provider-utils`
 - `npm run test:workspace-patch`
 - `npm run test:fake-server:self`

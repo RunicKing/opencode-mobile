@@ -5,8 +5,7 @@ import { Button, Card, Chip, Divider, IconButton, List, Surface, Text, TextInput
 
 import { MarkdownText } from '@/components/chat/chat-markdown';
 import { getDiffPalette, buildPatchDiff, buildCollapsedDiffBlocks } from '@/components/chat/chat-diff';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import type { PendingPermissionRequest, PendingQuestionAnswer, PendingQuestionRequest } from '@/lib/opencode/client';
 import { formatTimestamp, type TranscriptDetail, type TranscriptEntry } from '@/lib/opencode/format';
 import { summarizeTranscriptDetails } from '@/lib/opencode/transcript';
@@ -33,8 +32,7 @@ export function PendingInteractionsCard({
   permissions: PendingPermissionRequest[];
   questions: PendingQuestionRequest[];
 }) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
 
   return (
     <Card mode="contained" style={[styles.sectionCard, { backgroundColor: palette.surface }]}> 
@@ -75,8 +73,7 @@ function QuestionRequestCard({
   onReply: (answers: PendingQuestionAnswer[]) => void;
   request: PendingQuestionRequest;
 }) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const [answers, setAnswers] = useState<string[][]>(() => request.questions.map(() => []));
   const [customAnswers, setCustomAnswers] = useState<string[]>(() => request.questions.map(() => ''));
   const resolvedAnswers = request.questions.map((question, index) => {
@@ -149,8 +146,7 @@ function QuestionRequestCard({
 }
 
 export function SessionDiffCard({ diff, expanded, onPress }: { diff: FileDiff; expanded: boolean; onPress: () => void }) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const diffLines = useMemo(() => (expanded ? buildPatchDiff(diff.patch || '') : []), [diff.patch, expanded]);
   const diffBlocks = useMemo(() => (expanded ? buildCollapsedDiffBlocks(diffLines) : []), [diffLines, expanded]);
 
@@ -220,8 +216,7 @@ export function SessionDiffCard({ diff, expanded, onPress }: { diff: FileDiff; e
 }
 
 export function DiffCard({ detail, expanded, onPress }: { detail: Extract<TranscriptDetail, { kind: 'patch' }>; expanded: boolean; onPress: () => void }) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
 
   return (
     <List.Accordion
@@ -264,8 +259,7 @@ export function TranscriptMessage({
   onToggleSpeak: () => void;
   speaking?: boolean;
 }) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const isUser = entry.role === 'user';
   const detailSummary = summarizeTranscriptDetails(entry.details);
 
@@ -340,8 +334,7 @@ function PermissionRequestCard({
   onReply: (reply: 'once' | 'always' | 'reject') => void;
   request: PendingPermissionRequest;
 }) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
 
   return (
     <Card mode="contained" style={[styles.requestCard, compact && styles.requestCardCompact, { backgroundColor: palette.background }]}> 

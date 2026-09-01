@@ -22,16 +22,15 @@ import {
   TextInput,
 } from 'react-native-paper';
 
-import { Colors, Fonts } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Fonts } from '@/constants/theme';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import type { Pty } from '@/lib/opencode/types';
 import { useOpencode } from '@/providers/opencode-provider';
 
 export default function TerminalScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const outputRef = useRef<ScrollView>(null);
   const {
     activeProject,

@@ -13,15 +13,21 @@ import {
 
 import { NativeSelect, type NativeSelectOption } from '@/components/ui/native-select';
 import { renderProviderIcon } from '@/components/ui/provider-icon';
-import { Colors, Fonts } from '@/constants/theme';
+import { ACCENT_OPTIONS, FONT_SCALE_MAX, FONT_SCALE_MIN, FONT_SCALE_STEP } from '@/constants/appearance';
+import { Colors, Fonts, getColors } from '@/constants/theme';
 import { formatTimestamp } from '@/lib/opencode/format';
 import type { NotificationDebugStatus } from '@/lib/notifications';
 import type { OpencodeConnectionSettings } from '@/lib/opencode/client';
 import type { SpeechVoiceOption } from '@/lib/voice/speech-output';
 import type { WorkingSoundVariant } from '@/lib/voice/working-sound';
-import type { ChatPreferences, ModelOption, ProviderOption, ResponseScope } from '@/providers/opencode-provider';
+import type { AppearancePreferences, ChatPreferences, ModelOption, ProviderOption, ResponseScope } from '@/providers/opencode-provider';
 import type { Diagnostics } from '@/providers/services/diagnostics-service';
-import { getProviderCopy, RESPONSE_SCOPE_OPTIONS, WORKING_SOUND_OPTIONS } from '@/components/settings/settings-utils';
+import {
+  formatFontScaleLabel,
+  getProviderCopy,
+  RESPONSE_SCOPE_OPTIONS,
+  WORKING_SOUND_OPTIONS,
+} from '@/components/settings/settings-utils';
 
 type Palette = typeof Colors.light;
 
@@ -472,6 +478,61 @@ export function VoiceSection({
   );
 }
 
+type AppearanceSectionProps = {
+  appearancePreferences: AppearancePreferences;
+  colorScheme: 'light' | 'dark';
+  palette: Palette;
+  updateAppearancePreferences: (patch: Partial<AppearancePreferences>) => void;
+};
+
+export function AppearanceSection({ appearancePreferences, colorScheme, palette, updateAppearancePreferences }: AppearanceSectionProps) {
+  const selectedAccent = ACCENT_OPTIONS.find((option) => option.id === appearancePreferences.accentColor) ?? ACCENT_OPTIONS[0];
+
+  return (
+    <Card mode="contained" style={[styles.card, { backgroundColor: palette.surface }]}>
+      <Card.Content style={styles.section}>
+        <Text variant="titleLarge" style={[styles.title, { color: palette.text }]}>Appearance</Text>
+        <View style={styles.appearanceSwatches}>
+          {ACCENT_OPTIONS.map((option) => {
+            const accent = getColors(colorScheme, option.id);
+            const selected = option.id === appearancePreferences.accentColor;
+            return (
+              <Pressable
+                key={option.id}
+                accessibilityLabel={option.label}
+                accessibilityRole="button"
+                onPress={() => updateAppearancePreferences({ accentColor: option.id })}
+                style={[
+                  styles.appearanceSwatch,
+                  {
+                    backgroundColor: accent.tint,
+                    borderColor: selected ? palette.text : 'transparent',
+                  },
+                ]}>
+                {selected ? <NativeText style={{ color: accent.onBubbleUser, fontWeight: '700' }}>✓</NativeText> : null}
+              </Pressable>
+            );
+          })}
+        </View>
+        <Text variant="bodySmall" style={{ color: palette.muted }}>
+          {selectedAccent.label} — pick the highlight color used for buttons, links, selected items, and tabs.
+        </Text>
+        <NumericSlider
+          label="Font size"
+          maximum={FONT_SCALE_MAX}
+          minimum={FONT_SCALE_MIN}
+          step={FONT_SCALE_STEP}
+          value={appearancePreferences.fontScale}
+          valueLabel={formatFontScaleLabel(appearancePreferences.fontScale)}
+          onValueChange={(value) => updateAppearancePreferences({ fontScale: value })}
+          palette={palette}
+        />
+        <HelperText type="info">Scales the base text size across chats, tabs, and settings (80% to 140%).</HelperText>
+      </Card.Content>
+    </Card>
+  );
+}
+
 function NumericSlider({
   label,
   maximum,
@@ -645,4 +706,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   modelListItem: { paddingLeft: 16, paddingRight: 8 },
+  appearanceSwatches: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 2 },
+  appearanceSwatch: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 2,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
 });

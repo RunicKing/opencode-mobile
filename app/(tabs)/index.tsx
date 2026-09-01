@@ -3,13 +3,11 @@ import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Surface, Text } from 'react-native-paper';
 
 import { ChatView } from '@/components/chat/chat-view';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useOpencode } from '@/providers/opencode-provider';
 
 export default function ChatLandingScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const palette = Colors[colorScheme];
+  const palette = useThemeColors();
   const {
     activeProject,
     connection,
