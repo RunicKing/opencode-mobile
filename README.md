@@ -1,12 +1,54 @@
 # OpenCode Mobile
 
+> ## ⚠️ AI-authored fork disclaimer
+>
+> **This repository is a community fork of the upstream
+> [OpenCode Mobile](https://github.com/alvarolorentedev/opencode-mobile).**
+> The additional changes in this fork were written **entirely by Big Pickle, an
+> AI model**, working with a human operator. Specifically:
+>
+> - **All non-upstream code, tests, and documentation changes were authored or
+>   composed by the Big Pickle AI model.**
+> - These changes have **not** been reviewed by the upstream maintainers.
+> - **Things could be buggy.** Behavior may differ from the official Google Play
+>   build, and non-brand color themes use heuristically derived Material 3 tone
+>   mappings that may not look pixel-perfect on every screen.
+> - The core app is unchanged from upstream; only the *appearance* features
+>   described in this README were added on top.
+> - **Use at your own risk.** This fork is provided as-is with no warranties.
+> - For the official, reviewed release, use the upstream
+>   [app on Google Play](https://play.google.com/apps/testing/app.getopencode)
+>   or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
+
 [![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/app.getopencode)
-[![Download APK](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk)
+[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/latest/download/opencode-mobile-appearance.apk)
 
 
 **Your OpenCode server, in your pocket.**
 
 OpenCode Mobile brings the full power of your self-hosted OpenCode AI assistant to your Android device. Chat with your models, manage conversations, and stay productive anywhere.
+
+## This fork: what changed (Appearance Edition)
+
+This fork adds a **Settings → Appearance** section on top of upstream with two
+user-facing features, both by the big-pickle AI:
+
+- **Accent color themes** — choose between Brand green (default, matches the
+  stock look), Ocean blue, Violet, Rose, or Amber. The full Material 3 color
+  palette (primary/secondary/tertiary, inverse surfaces, tabs, buttons) follows
+  the chosen accent in light and dark mode.
+- **Text-size slider** — scale the base text size from **80% to 140%** so it
+  applies almost everywhere, including chat cards, diffs, markdown, the model
+  picker, settings rows, the terminal, workspace files, and tab labels.
+
+A full changelog and install notes live with each
+**[release](https://github.com/RunicKing/opencode-mobile/releases)**.
+
+**Install:** download the APK below, and if you previously installed a build
+signed with a different key, uninstall it first (Android will reject a
+signature mismatch).
+
+[![Download APK (this fork)](https://img.shields.io/badge/Download-opencode--mobile--appearance--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/latest/download/opencode-mobile-appearance.apk)
 
 ## Why OpenCode Mobile?
 
@@ -21,8 +63,9 @@ OpenCode Mobile brings the full power of your self-hosted OpenCode AI assistant 
 ### For Users
 
 1. **Download the app**:
-   - [Google Play (Beta)](https://play.google.com/apps/testing/app.getopencode)
-   - [Direct APK Download](https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk)
+   - [This fork: Appearance APK](https://github.com/RunicKing/opencode-mobile/releases/latest/download/opencode-mobile-appearance.apk)
+   - [Google Play (Beta, official upstream)](https://play.google.com/apps/testing/app.getopencode)
+   - [Upstream direct APK](https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk)
 
 2. **Connect to your server**: Open the app and enter your OpenCode server URL (default: `http://ip:4096`)
 
