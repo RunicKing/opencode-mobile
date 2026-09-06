@@ -21,6 +21,7 @@ import { useSpeechInput } from '@/lib/voice/use-speech-input';
 import { useOpencode } from '@/providers/opencode-provider';
 
 export function ChatView() {
+  'use no memo';
   const palette = useThemeColors();
   const styles = getChatViewStyles(useFontScale());
   const insets = useSafeAreaInsets();
@@ -87,43 +88,12 @@ export function ChatView() {
   const attachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastSentAttachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastAutoSpokenMessageIdRef = useRef<string | undefined>(undefined);
-  const chromeFade = useRef(new Animated.Value(1)).current;
   const chromeButtonTop = useRef(new Animated.Value(0)).current;
   const chromeTopRef = useRef(0);
-  const chromeUnmountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const chromeToggleGenRef = useRef(0);
-
-  useEffect(() => {
-    return () => {
-      if (chromeUnmountTimerRef.current) clearTimeout(chromeUnmountTimerRef.current);
-    };
-  }, []);
 
   function toggleChrome() {
     const next = !chromeHidden;
-    const gen = chromeToggleGenRef.current + 1;
-    chromeToggleGenRef.current = gen;
-    if (next) {
-      Animated.timing(chromeFade, {
-        toValue: 0,
-        duration: 180,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }).start(() => {
-        if (chromeToggleGenRef.current === gen) setChromeHidden(true);
-      });
-      if (chromeUnmountTimerRef.current) clearTimeout(chromeUnmountTimerRef.current);
-      chromeUnmountTimerRef.current = setTimeout(() => {
-        if (chromeToggleGenRef.current === gen) setChromeHidden(true);
-      }, 300);
-    } else {
-      if (chromeUnmountTimerRef.current) {
-        clearTimeout(chromeUnmountTimerRef.current);
-        chromeUnmountTimerRef.current = null;
-      }
-      chromeFade.setValue(1);
-      setChromeHidden(false);
-    }
+    setChromeHidden(next);
     const full = chromeTopRef.current || 120;
     Animated.timing(chromeButtonTop, {
       toValue: next ? insets.top + 6 : full + 6,
@@ -472,7 +442,7 @@ export function ChatView() {
 <Animated.View
           style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
         {chromeHidden ? null : (
-        <Animated.View style={{ opacity: chromeFade }}>
+        <View key="chrome-block">
           <View
             collapsable={false}
             onLayout={(event) => {
@@ -515,7 +485,6 @@ export function ChatView() {
             <TopTab active={activeTab === 'changes'} label={`${diffCount} Files Changed`} onPress={() => setActiveTab('changes')} />
           </View>
           </View>
-        </Animated.View>
         )}
 
         <Animated.View
