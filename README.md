@@ -21,7 +21,7 @@
 >   or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
 
 [![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/app.getopencode)
-[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
+[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-only/opencode-mobile-floating-toggle-only.apk)
 
 
 **Your OpenCode server, in your pocket.**
@@ -60,6 +60,7 @@ signature mismatch).
 
 Older builds:
 
+- [No-Memo Chrome Toggle Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
 - [State-Driven Chrome Toggle Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-state-driven-chrome-toggle/opencode-mobile-state-driven-chrome-toggle.apk)
 - [Composer Lift & Chrome Toggle Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-composer-lift-and-chrome-toggle/opencode-mobile-composer-lift-and-chrome-toggle.apk)
 - [Floating Toggle & Keyboard Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-and-keyboard-fixes/opencode-mobile-floating-toggle-and-keyboard-fixes.apk)
@@ -70,7 +71,7 @@ Older builds:
 - [Full Color Themes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
 - [Appearance Edition APK (accents + font size, no full theming)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
 
-[![Download APK (this fork, No-Memo Chrome Toggle Edition)](https://img.shields.io/badge/Download-opencode--mobile--no--memo--chrome--toggle--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
+[![Download APK (this fork, Floating Toggle Only Edition)](https://img.shields.io/badge/Download-opencode--mobile--floating--toggle--only--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-only/opencode-mobile-floating-toggle-only.apk)
 
 ## Why OpenCode Mobile?
 
@@ -85,7 +86,8 @@ Older builds:
 ### For Users
 
 1. **Download the app**:
-   - [This fork: No-Memo Chrome Toggle Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
+   - [This fork: Floating Toggle Only Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-only/opencode-mobile-floating-toggle-only.apk)
+   - [This fork: No-Memo Chrome Toggle Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
    - [This fork: State-Driven Chrome Toggle Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-state-driven-chrome-toggle/opencode-mobile-state-driven-chrome-toggle.apk)
    - [This fork: Composer Lift & Chrome Toggle Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-composer-lift-and-chrome-toggle/opencode-mobile-composer-lift-and-chrome-toggle.apk)
    - [This fork: Floating Toggle & Keyboard Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-and-keyboard-fixes/opencode-mobile-floating-toggle-and-keyboard-fixes.apk)
