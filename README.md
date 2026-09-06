@@ -21,22 +21,23 @@
 >   or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
 
 [![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/app.getopencode)
-[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/latest/download/opencode-mobile-appearance.apk)
+[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
 
 
 **Your OpenCode server, in your pocket.**
 
 OpenCode Mobile brings the full power of your self-hosted OpenCode AI assistant to your Android device. Chat with your models, manage conversations, and stay productive anywhere.
 
-## This fork: what changed (Appearance Edition)
+## This fork: what changed (Full Color Themes Edition)
 
 This fork adds a **Settings → Appearance** section on top of upstream with two
 user-facing features, both by the big-pickle AI:
 
-- **Accent color themes** — choose between Brand green (default, matches the
-  stock look), Ocean blue, Violet, Rose, or Amber. The full Material 3 color
-  palette (primary/secondary/tertiary, inverse surfaces, tabs, buttons) follows
-  the chosen accent in light and dark mode.
+- **Full color themes** — choose between Brand green (default, matches the
+  stock look), Ocean blue, Violet, Rose, or Amber. The chosen theme is applied
+  **everywhere**, not just to highlights: the background, cards, surfaces,
+  borders, muted text, chat bubbles, tabs, navigation chrome, and the
+  conversation/voice screen all follow it in light and dark mode.
 - **Text-size slider** — scale the base text size from **80% to 140%** so it
   applies almost everywhere, including chat cards, diffs, markdown, the model
   picker, settings rows, the terminal, workspace files, and tab labels.
@@ -48,7 +49,11 @@ A full changelog and install notes live with each
 signed with a different key, uninstall it first (Android will reject a
 signature mismatch).
 
-[![Download APK (this fork)](https://img.shields.io/badge/Download-opencode--mobile--appearance--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/latest/download/opencode-mobile-appearance.apk)
+Older builds:
+
+- [Appearance Edition APK (accents + font size, no full theming)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
+
+[![Download APK (this fork, Full Color Themes)](https://img.shields.io/badge/Download-opencode--mobile--full--color--themes--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
 
 ## Why OpenCode Mobile?
 
@@ -63,7 +68,8 @@ signature mismatch).
 ### For Users
 
 1. **Download the app**:
-   - [This fork: Appearance APK](https://github.com/RunicKing/opencode-mobile/releases/latest/download/opencode-mobile-appearance.apk)
+   - [This fork: Full Color Themes APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
+   - [This fork: Appearance Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
    - [Google Play (Beta, official upstream)](https://play.google.com/apps/testing/app.getopencode)
    - [Upstream direct APK](https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk)
 
