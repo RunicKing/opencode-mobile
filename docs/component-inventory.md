@@ -171,12 +171,14 @@ type ChatComposerProps = {
 
 The header (and the tab row below it in `chat-view.tsx`) can be collapsed via a toggle action
 (`onToggleChrome` / `chromeHidden`). `ChatView` animates the height of both down to zero with
-`Animated`, and shows a floating `Appbar.Action` (chevron-down) to restore them when hidden. The
-toggle button is in the Session/Files-Changed tabs row (`testID="toggle-chrome-button"`) and
-also as a header `Appbar.Action`. When chrome is hidden, only the floating restore button is
-visible. The chrome height is measured via an inner `View` (`collapsable={false}`) so
-`chromeMeasuredHeightRef` stores the real content height regardless of the animation state,
-which prevents the expand-to-zero bug.
+`Animated`. A single always-visible floating button (`testID="toggle-chrome-button"`,
+`chromeFloat`/`chromeFloatButton` styles) sits just below the header+tabs and is **not** part of
+the clipped chrome, so it stays on screen whether the header is shown or hidden. Its `top` is
+driven by the `chromeButtonTop` `Animated.Value` (animated in parallel with `chromeHeight`), so it
+auto-adapts: it rests below the header when visible and moves up to just under the status bar when
+the header is hidden (passing `insets.top`). The chrome height is measured via an inner
+`View` (`collapsable={false}`) so `chromeMeasuredHeightRef` stores the real content height
+regardless of the animation state, which prevents the expand-to-zero bug.
 
 ### Prop contract
 

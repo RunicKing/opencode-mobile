@@ -3,7 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Animated, Easing, Platform, Pressable, View } from 'react-native';
-import { Appbar, Button, Card, Snackbar, Text } from 'react-native-paper';
+import { Button, Card, Snackbar, Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChatComposer } from '@/components/chat/chat-composer';
@@ -88,18 +88,23 @@ export function ChatView() {
   const lastSentAttachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastAutoSpokenMessageIdRef = useRef<string | undefined>(undefined);
   const chromeHeight = useRef(new Animated.Value(0)).current;
+  const chromeButtonTop = useRef(new Animated.Value(0)).current;
   const chromeMeasuredHeightRef = useRef(0);
   const chromeInitializedRef = useRef(false);
 
   function toggleChrome() {
     const next = !chromeHidden;
     setChromeHidden(next);
-    Animated.timing(chromeHeight, {
-      toValue: next ? 0 : (chromeMeasuredHeightRef.current || 0),
+    const full = chromeMeasuredHeightRef.current || 0;
+    const timing = {
       duration: next ? 240 : 280,
       easing: next ? Easing.in(Easing.cubic) : Easing.out(Easing.cubic),
       useNativeDriver: false,
-    }).start();
+    } as const;
+    Animated.parallel([
+      Animated.timing(chromeHeight, { ...timing, toValue: next ? 0 : full }),
+      Animated.timing(chromeButtonTop, { ...timing, toValue: next ? insets.top + 6 : full + 6 }),
+    ]).start();
   }
 
   const status = currentSessionId ? sessionStatuses[currentSessionId] : undefined;
@@ -450,6 +455,7 @@ export function ChatView() {
                 if (!chromeInitializedRef.current) {
                   chromeInitializedRef.current = true;
                   chromeHeight.setValue(chromeHidden ? 0 : height);
+                  chromeButtonTop.setValue(chromeHidden ? insets.top + 6 : height + 6);
                 }
               }
             }}>
@@ -484,31 +490,29 @@ export function ChatView() {
           <View style={[styles.tabsRow, { backgroundColor: palette.surface, borderBottomColor: palette.border }]}>
             <TopTab active={activeTab === 'session'} label="Session" onPress={() => setActiveTab('session')} />
             <TopTab active={activeTab === 'changes'} label={`${diffCount} Files Changed`} onPress={() => setActiveTab('changes')} />
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Hide session header and tabs"
-              onPress={toggleChrome}
-              testID="toggle-chrome-button"
-              style={({ pressed }) => [styles.chromeToggleTab, { opacity: pressed ? 0.7 : 1 }]}>
-              <MaterialCommunityIcons
-                name="arrow-collapse-up"
-                size={20}
-                color={palette.muted}
-              />
-            </Pressable>
           </View>
           </View>
         </Animated.View>
 
-        {chromeHidden ? (
-          <View pointerEvents="box-none" style={[styles.chromeExpandFloat, { top: insets.top + 8 }]}>
-            <Appbar.Action
-              icon="arrow-collapse-down"
-              accessibilityLabel="Show session header and tabs"
-              onPress={toggleChrome}
+        <Animated.View
+          pointerEvents="box-none"
+          style={[styles.chromeFloat, { top: chromeButtonTop }]}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={chromeHidden ? 'Show session header and tabs' : 'Hide session header and tabs'}
+            onPress={toggleChrome}
+            testID="toggle-chrome-button"
+            style={({ pressed }) => [
+              styles.chromeFloatButton,
+              { backgroundColor: palette.surface, borderColor: palette.border, opacity: pressed ? 0.8 : 1 },
+            ]}>
+            <MaterialCommunityIcons
+              name={chromeHidden ? 'arrow-collapse-down' : 'arrow-collapse-up'}
+              size={22}
+              color={palette.tint}
             />
-          </View>
-        ) : null}
+          </Pressable>
+        </Animated.View>
 
         <ChatContent
           activeSession={activeSession}
