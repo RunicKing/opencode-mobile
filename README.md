@@ -21,7 +21,7 @@
 >   or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
 
 [![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/app.getopencode)
-[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
+[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
 
 
 **Your OpenCode server, in your pocket.**
@@ -43,6 +43,11 @@ user-facing features, both by the big-pickle AI:
   picker, settings rows, the terminal, workspace files, and tab labels. The
   slider is smooth: it previews the size live while you drag and commits once
   on release (0.05 steps).
+- **Smooth keyboard** — opening and closing the on-screen keyboard no longer
+  "jitters" the message-box area for a few seconds.
+- **Collapsible chat header** — a chevron button on the conversation tab hides
+  the session header and the Session / Files-Changed tab row with a smooth
+  animation, reclaiming screen space (a floating button brings them back).
 
 A full changelog and install notes live with each
 **[release](https://github.com/RunicKing/opencode-mobile/releases)**.
@@ -53,10 +58,11 @@ signature mismatch).
 
 Older builds:
 
+- [Font Scale Fixes Edition APK (smooth text-size slider)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
 - [Full Color Themes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
 - [Appearance Edition APK (accents + font size, no full theming)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
 
-[![Download APK (this fork, Font Scale Fixes Edition)](https://img.shields.io/badge/Download-opencode--mobile--font--scale--fixes--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
+[![Download APK (this fork, Chrome Hide & Keyboard Fixes Edition)](https://img.shields.io/badge/Download-opencode--mobile--chrome--hide--keyboard--fixes--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
 
 ## Why OpenCode Mobile?
 
@@ -71,7 +77,8 @@ Older builds:
 ### For Users
 
 1. **Download the app**:
-   - [This fork: Font Scale Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
+   - [This fork: Chrome Hide & Keyboard Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
+   - [This fork: Font Scale Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
    - [This fork: Full Color Themes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
    - [This fork: Appearance Edition APK (oldest)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
    - [Google Play (Beta, official upstream)](https://play.google.com/apps/testing/app.getopencode)
