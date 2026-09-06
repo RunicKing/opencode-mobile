@@ -539,19 +539,20 @@ Used primarily by tab icons.
 
 ### Responsibility
 
-- return the accent-aware palette for the current appearance (`getColors(colorScheme, appearancePreferences.accentColor)`)
-- consumed wherever the palette is required so tint surfaces follow the chosen accent color
+- return the theme-aware palette for the current appearance (`getColors(colorScheme, appearancePreferences.accentColor)`)
+- consumed wherever the palette is required so backgrounds, surfaces, text, borders, bubbles, and tabs follow the chosen color theme
 
 ## `constants/appearance.ts`
 
 ### Responsibility
 
-- define the RN-free accent presets (`ACCENT_OPTIONS`, `AccentColorId`), `getAccentPalette`, and font-scale bounds (`FONT_SCALE_MIN/MAX/STEP`, `clampFontScale`)
+- define the RN-free color-theme presets (`ACCENT_OPTIONS`, `AccentColorId`), `getAccentPalette`, and font-scale bounds (`FONT_SCALE_MIN/MAX/STEP`, `clampFontScale`)
+- each preset ids a complete theme (backgrounds, surfaces, text, borders, bubbles, tabs) defined in `constants/theme.ts`
 - kept free of react-native imports so it is unit-testable with the node transpile harness in `tests/appearance.test.mjs`
 
 ## `constants/theme.ts` and `constants/paper-theme.ts`
 
-`getColors(colorScheme, accentColor)` overrides tinted entries of the base palette with the selected accent; `getPaperTheme(...)` additionally scales the Paper typefaces by `fontScale`.
+`THEMES` in `constants/theme.ts` holds a full light/dark neutral palette per theme; `getColors(colorScheme, accentColor)` composes each theme's complete palette (background, surface, text, borders, bubbles, tabs) with the selected accent's highlight roles. `getPaperTheme(...)` derives the MD3 Paper theme palette and scales the Paper typefaces by `fontScale`.
 
 ### Theme and font scaling
 

@@ -8,6 +8,7 @@ import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { getPaperTheme } from '@/constants/paper-theme';
+import { getColors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { OpencodeProvider, useAppearancePreferences } from '@/providers/opencode-provider';
 
@@ -19,14 +20,33 @@ function ThemedApp() {
   const colorScheme = useColorScheme();
   const scheme: 'light' | 'dark' = colorScheme === 'dark' ? 'dark' : 'light';
   const { appearancePreferences } = useAppearancePreferences();
+  const palette = useMemo(
+    () => getColors(scheme, appearancePreferences.accentColor),
+    [appearancePreferences.accentColor, scheme],
+  );
   const paperTheme = useMemo(
     () => getPaperTheme(scheme, appearancePreferences.accentColor, appearancePreferences.fontScale),
     [appearancePreferences.accentColor, appearancePreferences.fontScale, scheme],
   );
+  const navigationTheme = useMemo(() => {
+    const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        background: palette.background,
+        card: palette.surface,
+        text: palette.text,
+        border: palette.border,
+        primary: palette.tint,
+        notification: palette.tint,
+      },
+    };
+  }, [palette, scheme]);
 
   return (
     <PaperProvider theme={paperTheme}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={navigationTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>

@@ -122,10 +122,10 @@ These values combine true application behavior settings and output-style prefere
 
 Current fields:
 
-- `accentColor` — one of the presets in `constants/appearance.ts` (`brand`, `ocean`, `violet`, `rose`, `amber`); `brand` matches the stock palette
+- `accentColor` — one of the full color-theme presets in `constants/appearance.ts` (`brand`, `ocean`, `violet`, `rose`, `amber`); `brand` matches the stock palette. Each preset is a complete theme: it changes every color in the app, including backgrounds, surfaces, text, borders, chat bubbles, and tabs.
 - `fontScale` — base text-size multiplier, clamped between `FONT_SCALE_MIN` (0.8) and `FONT_SCALE_MAX` (1.4)
 
-Appearance preferences are UI-only: they never affect prompts or protocol traffic. `accentColor` is applied to tinted colors through `getColors()` in `constants/theme.ts` (used by `useThemeColors()`), and the Paper theme derives a full MD3 color-role set from it (`constants/m3-colors.ts`). `fontScale` scales the Paper typefaces in `getPaperTheme()` and is applied to inline `fontSize`/`lineHeight` styles via `useFontScale()` and `scaleTextSize()`. The palette and Paper theme are made available to components through the memoized `AppearancePreferencesContext` exported by the provider, so appearance changes re-render only the theme surface rather than the whole app.
+Appearance preferences are UI-only: they never affect prompts or protocol traffic. `accentColor` selects a full light/dark palette pair in `constants/theme.ts` (`THEMES`), and `getColors()` in `constants/theme.ts` (used by `useThemeColors()`) returns that complete palette instead of only overriding the tinted entries. The Paper theme derives a full MD3 color-role set from it (`constants/m3-colors.ts`). `fontScale` scales the Paper typefaces in `getPaperTheme()` and is applied to inline `fontSize`/`lineHeight` styles via `useFontScale()` and `scaleTextSize()`. The palette and Paper theme are made available to components through the memoized `AppearancePreferencesContext` exported by the provider, so appearance changes re-render only the theme surface rather than the whole app.
 
 `workspaceFiles`, selected file content, worktrees, and MCP status/config are server-derived and not persisted. Text edits remain local to the Workspace screen until the provider conflict-checks and saves them as a VCS patch.
 

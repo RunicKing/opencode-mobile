@@ -434,7 +434,7 @@ export default function SettingsScreen() {
               updateChatPreferences={updateChatPreferences}
             />
           </List.Accordion>
-          <List.Accordion id="appearance" title="Appearance" description={`${selectedAccentLabel} • ${Math.round(appearancePreferences.fontScale * 100)}%`} titleStyle={{ color: palette.text }} descriptionStyle={{ color: palette.muted }} style={[styles.category, { backgroundColor: palette.surface, borderColor: palette.border }]}>
+          <List.Accordion id="appearance" title="Appearance" description={`Theme: ${selectedAccentLabel} • ${Math.round(appearancePreferences.fontScale * 100)}%`} titleStyle={{ color: palette.text }} descriptionStyle={{ color: palette.muted }} style={[styles.category, { backgroundColor: palette.surface, borderColor: palette.border }]}>
             <AppearanceSection appearancePreferences={appearancePreferences} colorScheme={colorScheme} palette={palette} updateAppearancePreferences={updateAppearancePreferences} />
           </List.Accordion>
           <List.Accordion id="advanced" title="Advanced" description="MCP servers and diagnostics" titleStyle={{ color: palette.text }} descriptionStyle={{ color: palette.muted }} style={[styles.category, { backgroundColor: palette.surface, borderColor: palette.border }]}>

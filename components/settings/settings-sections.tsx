@@ -498,7 +498,7 @@ export function AppearanceSection({ appearancePreferences, colorScheme, palette,
         <Text variant="titleLarge" style={[styles.title, { color: palette.text }]}>Appearance</Text>
         <View style={styles.appearanceSwatches}>
           {ACCENT_OPTIONS.map((option) => {
-            const accent = getColors(colorScheme, option.id);
+            const theme = getColors(colorScheme, option.id);
             const selected = option.id === appearancePreferences.accentColor;
             return (
               <Pressable
@@ -509,17 +509,19 @@ export function AppearanceSection({ appearancePreferences, colorScheme, palette,
                 style={[
                   styles.appearanceSwatch,
                   {
-                    backgroundColor: accent.tint,
-                    borderColor: selected ? palette.text : 'transparent',
+                    backgroundColor: theme.background,
+                    borderColor: selected ? palette.text : theme.border,
                   },
                 ]}>
-                {selected ? <NativeText style={{ color: accent.onBubbleUser, fontWeight: '700' }}>✓</NativeText> : null}
+                <View style={[styles.appearanceSwatchDisc, { backgroundColor: theme.tint }]}>
+                  {selected ? <NativeText style={{ color: theme.onBubbleUser, fontWeight: '700' }}>✓</NativeText> : null}
+                </View>
               </Pressable>
             );
           })}
         </View>
         <Text variant="bodySmall" style={{ color: palette.muted }}>
-          {selectedAccent.label} — pick the highlight color used for buttons, links, selected items, and tabs.
+          {selectedAccent.label} — this color theme is applied everywhere: the background, cards, chat bubbles, buttons, tabs, and text.
         </Text>
         <NumericSlider
           label="Font size"
@@ -715,10 +717,17 @@ const styles = StyleSheet.create({
   appearanceSwatches: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 2 },
   appearanceSwatch: {
     alignItems: 'center',
-    borderRadius: 999,
+    borderRadius: 14,
     borderWidth: 2,
-    height: 40,
+    height: 48,
     justifyContent: 'center',
-    width: 40,
+    width: 48,
+  },
+  appearanceSwatchDisc: {
+    alignItems: 'center',
+    borderRadius: 999,
+    height: 22,
+    justifyContent: 'center',
+    width: 22,
   },
 });

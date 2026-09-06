@@ -3,9 +3,10 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
 import { scaleTextSize } from '@/constants/appearance';
-import { Fonts } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { mixHex } from '@/constants/m3-colors';
+import { Fonts, getColors } from '@/constants/theme';
 import { useFontScale } from '@/hooks/use-font-scale';
+import { useAppearancePreferences } from '@/providers/opencode-provider';
 
 export function ConversationOverlay({
   connectionStatus,
@@ -22,8 +23,9 @@ export function ConversationOverlay({
   phase: 'off' | 'listening' | 'submitting' | 'waiting' | 'speaking';
   sessionTitle: string;
 }) {
-  const colorScheme = useColorScheme() ?? 'light';
   const fontScale = useFontScale();
+  const { appearancePreferences } = useAppearancePreferences();
+  const palette = getColors('dark', appearancePreferences.accentColor);
   const orbScale = useRef(new Animated.Value(1)).current;
   const orbOpacity = useRef(new Animated.Value(0.9)).current;
 
@@ -47,12 +49,12 @@ export function ConversationOverlay({
     ]).start();
   }, [orbOpacity, orbScale, phase]);
 
-  const accent = colorScheme === 'dark' ? '#4EE0B6' : '#6FDCCA';
+  const accent = palette.tint;
   const electric = '#2C8CFF';
-  const overlayBackground = colorScheme === 'dark' ? '#020404' : '#040808';
-  const overlaySurface = colorScheme === 'dark' ? 'rgba(16, 22, 21, 0.92)' : 'rgba(18, 27, 26, 0.88)';
-  const overlayText = '#F4FBF8';
-  const overlayMuted = 'rgba(228, 240, 236, 0.68)';
+  const overlayBackground = mixHex(palette.background, '#000000', 0.5);
+  const overlaySurface = mixHex(palette.surface, '#000000', 0.12);
+  const overlayText = palette.text;
+  const overlayMuted = mixHex(palette.text, palette.background, 0.5);
   const orbRing = phase === 'speaking' ? `${electric}30` : `${accent}24`;
   const phaseLabel = phase.charAt(0).toUpperCase() + phase.slice(1);
   const connectionEmoji = connectionStatus === 'error' ? '⚠️' : connectionStatus === 'connecting' ? '🔄' : undefined;
@@ -72,8 +74,8 @@ export function ConversationOverlay({
 
         <View style={styles.voiceOverlayCenter}>
           <Animated.View style={[styles.voiceOrbShell, { borderColor: orbRing, opacity: orbOpacity, transform: [{ scale: orbScale }] }]}> 
-            <View style={styles.voiceOrbCore}>
-              <View style={[styles.voiceOrbBlobTop, { backgroundColor: '#D7F3F0' }]} />
+            <View style={[styles.voiceOrbCore, { backgroundColor: mixHex(palette.tint, '#FFFFFF', 0.72) }]}>
+              <View style={[styles.voiceOrbBlobTop, { backgroundColor: mixHex(palette.tint, '#FFFFFF', 0.35) }]} />
               <View style={[styles.voiceOrbBlobBottom, { backgroundColor: electric }]} />
               <View style={[styles.voiceOrbHighlight, { backgroundColor: 'rgba(255,255,255,0.36)' }]} />
             </View>

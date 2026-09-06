@@ -26,6 +26,7 @@ From `TESTING.md`, those gates include:
 - `npm run test:format`
 - `npm run test:appearance`
 - `npm run test:m3-colors`
+- `npm run test:theme`
 - `npm run test:provider-utils`
 - `npm run test:workspace-patch`
 - `npm run test:fake-server:self`
