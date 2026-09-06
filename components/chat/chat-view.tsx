@@ -1,8 +1,8 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
-import { Button, Card, Snackbar, Text } from 'react-native-paper';
+import { Alert, Animated, Easing, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { Appbar, Button, Card, Snackbar, Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChatComposer } from '@/components/chat/chat-composer';
@@ -73,6 +73,7 @@ export function ChatView() {
   const [isUpdatingAutoApprove, setIsUpdatingAutoApprove] = useState(false);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [isStoppingSession, setIsStoppingSession] = useState(false);
+  const [chromeHidden, setChromeHidden] = useState(false);
   const [expandedDiffId, setExpandedDiffId] = useState<string | undefined>();
   const [copiedMessageId, setCopiedMessageId] = useState<string | undefined>();
   const [speakingMessageId, setSpeakingMessageId] = useState<string | undefined>(undefined);
@@ -83,6 +84,19 @@ export function ChatView() {
   const attachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastSentAttachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastAutoSpokenMessageIdRef = useRef<string | undefined>(undefined);
+  const chromeHeight = useRef(new Animated.Value(0)).current;
+  const chromeMeasuredHeightRef = useRef(0);
+
+  function toggleChrome() {
+    const next = !chromeHidden;
+    setChromeHidden(next);
+    Animated.timing(chromeHeight, {
+      toValue: next ? 0 : (chromeMeasuredHeightRef.current || 0),
+      duration: next ? 240 : 280,
+      easing: next ? Easing.in(Easing.cubic) : Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }
 
   const status = currentSessionId ? sessionStatuses[currentSessionId] : undefined;
   const running = sendingState.active || (!!status && status.type !== 'idle');
@@ -422,38 +436,60 @@ export function ChatView() {
     <>
       <KeyboardAvoidingView
         style={[styles.screen, { backgroundColor: palette.background }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}>
-        <ChatHeader
-          connectionStatus={connection.status}
-          conversation={conversation}
-          contextLimit={contextModel?.contextLimit}
-          contextTokens={selectedSession?.tokens?.input}
-          currentSessionId={currentSessionId}
-          isUsageLoading={isRefreshingMessages}
-          insetsTop={insets.top}
-          isCreatingSession={isCreatingSession}
-          onCloseMenu={() => setSessionMenuVisible(false)}
-          onConfirmStopConversation={handleConfirmStopConversation}
-          onCreateSession={() => void handleNewSession()}
-          onOpenSession={(sessionId) => {
-            setSessionMenuVisible(false);
-            void openSession(sessionId);
+        <Animated.View
+          onLayout={(event) => {
+            const height = event.nativeEvent.layout.height;
+            if (chromeMeasuredHeightRef.current !== height) {
+              chromeMeasuredHeightRef.current = height;
+              chromeHeight.setValue(chromeHidden ? 0 : height);
+            }
           }}
-          onOpenSessionMenu={() => setSessionMenuVisible(true)}
-          onToggleConversationMode={() => void toggleConversationMode()}
-          palette={palette}
-          selectedSession={selectedSession}
-          sessionMenuVisible={sessionMenuVisible}
-          sessions={visibleSessions}
-          latestAssistantTurnUsage={latestAssistantTurnUsage}
-          usage={currentUsage}
-        />
+          style={{ height: chromeHeight, overflow: 'hidden' }}>
+          <ChatHeader
+            connectionStatus={connection.status}
+            conversation={conversation}
+            contextLimit={contextModel?.contextLimit}
+            contextTokens={selectedSession?.tokens?.input}
+            currentSessionId={currentSessionId}
+            isUsageLoading={isRefreshingMessages}
+            insetsTop={insets.top}
+            isCreatingSession={isCreatingSession}
+            onCloseMenu={() => setSessionMenuVisible(false)}
+            onConfirmStopConversation={handleConfirmStopConversation}
+            onCreateSession={() => void handleNewSession()}
+            onOpenSession={(sessionId) => {
+              setSessionMenuVisible(false);
+              void openSession(sessionId);
+            }}
+            onOpenSessionMenu={() => setSessionMenuVisible(true)}
+            onToggleConversationMode={() => void toggleConversationMode()}
+            onToggleChrome={toggleChrome}
+            chromeHidden={chromeHidden}
+            palette={palette}
+            selectedSession={selectedSession}
+            sessionMenuVisible={sessionMenuVisible}
+            sessions={visibleSessions}
+            latestAssistantTurnUsage={latestAssistantTurnUsage}
+            usage={currentUsage}
+          />
 
-        <View style={[styles.tabsRow, { backgroundColor: palette.surface, borderBottomColor: palette.border }]}>
-          <TopTab active={activeTab === 'session'} label="Session" onPress={() => setActiveTab('session')} />
-          <TopTab active={activeTab === 'changes'} label={`${diffCount} Files Changed`} onPress={() => setActiveTab('changes')} />
-        </View>
+          <View style={[styles.tabsRow, { backgroundColor: palette.surface, borderBottomColor: palette.border }]}>
+            <TopTab active={activeTab === 'session'} label="Session" onPress={() => setActiveTab('session')} />
+            <TopTab active={activeTab === 'changes'} label={`${diffCount} Files Changed`} onPress={() => setActiveTab('changes')} />
+          </View>
+        </Animated.View>
+
+        {chromeHidden ? (
+          <View pointerEvents="box-none" style={[styles.chromeExpandFloat, { top: insets.top + 8 }]}>
+            <Appbar.Action
+              icon="arrow-collapse-down"
+              accessibilityLabel="Show session header and tabs"
+              onPress={toggleChrome}
+            />
+          </View>
+        ) : null}
 
         <ChatContent
           activeSession={activeSession}

@@ -36,6 +36,7 @@ export function getChatViewStyles(fontScale: number) {
   usageRow: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between' },
   contextProgress: { borderRadius: 999, height: 8 },
   tabsRow: { flexDirection: 'row', borderBottomWidth: 1 },
+  chromeExpandFloat: { position: 'absolute', right: 12, zIndex: 20, elevation: 6, borderRadius: 999, backgroundColor: 'transparent' },
   chatArea: { flex: 1, position: 'relative' },
   scroll: { flex: 1 },
   content: { padding: 12, gap: 12, paddingBottom: 20 },

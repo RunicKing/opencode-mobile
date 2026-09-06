@@ -170,6 +170,10 @@ type ChatComposerProps = {
 - compact current-session usage summary and usage breakdown sheet
 - mounting point for conversation overlay
 
+The header (and the tab row below it in `chat-view.tsx`) can be collapsed via a toggle action
+(`onToggleChrome` / `chromeHidden`). `ChatView` animates the height of both down to zero with
+`Animated` and shows a floating `Appbar.Action` (chevron-down) to restore them when hidden.
+
 ### Prop contract
 
 ```ts
@@ -184,6 +188,8 @@ type ChatHeaderProps = {
   onOpenSession: (sessionId: string) => void
   onOpenSessionMenu: () => void
   onToggleConversationMode: () => void
+  onToggleChrome: () => void
+  chromeHidden: boolean
   palette: Palette
   selectedSession?: Session
   sessionMenuVisible: boolean

@@ -369,6 +369,7 @@ This is one of the densest parts of the architecture and would need careful pari
 - Diff rendering is custom and optimized for readable in-app inspection, not full git-style fidelity.
 - The chat area surfaces server-owned todos in a collapsed overlay with read-only status icons. It does not mutate todo state.
 - Working sound is started by the provider while a send or any session is busy, when enabled, except during listening and speaking phases.
+- Keyboard handling on Android does **not** use `KeyboardAvoidingView` `behavior="height"`. The app runs edge-to-edge with `softwareKeyboardLayoutMode: 'resize'`, so the system resizes the window. On RN 0.81, `behavior="height"` in edge-to-edge mode triggers a `KeyboardAvoidingView` render loop on Android after the keyboard dismisses (visible as several seconds of jitter). `ChatView` and `TerminalScreen` therefore pass `behavior` only on iOS (`'padding'`); Android relies on the system resize. The chat screen also lets the user collapse the header + tab row (`ChatView.toggleChrome`) so the transcript gets more room.
 
 ## Architectural Hotspots
 
