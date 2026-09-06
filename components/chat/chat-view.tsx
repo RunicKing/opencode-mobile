@@ -469,8 +469,6 @@ export function ChatView() {
             }}
             onOpenSessionMenu={() => setSessionMenuVisible(true)}
             onToggleConversationMode={() => void toggleConversationMode()}
-            onToggleChrome={toggleChrome}
-            chromeHidden={chromeHidden}
             palette={palette}
             selectedSession={selectedSession}
             sessionMenuVisible={sessionMenuVisible}

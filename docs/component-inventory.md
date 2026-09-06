@@ -169,18 +169,17 @@ type ChatComposerProps = {
 - compact current-session usage summary and usage breakdown sheet
 - mounting point for conversation overlay
 
-The header (and the tab row below it in `chat-view.tsx`) can be collapsed via a toggle action
-(`onToggleChrome` / `chromeHidden`). Collapse is **state-driven**: the block is only mounted while
-visible, so hiding unmounts it and the transcript expands regardless of whether any animation
-renders. Hiding plays a cosmetic `chromeFade` opacity fade to zero, then unmounts after an
-animation callback **plus** a hard `setTimeout` fallback (so the header can never stay stuck on
-screen). Showing mounts the block at full opacity. A single always-visible floating button
-(`testID="toggle-chrome-button"`, `chromeFloat`/`chromeFloatButton` styles) sits just below the
-header+tabs and is **not** part of the chrome, so it stays on screen whether the header is shown or
-hidden. Its `top` is driven by the `chromeButtonTop` `Animated.Value`; it rests below the header
-when visible and moves up to just under the status bar when hidden (`insets.top`). The mounted
-chrome's inner `View` (`collapsable={false}`) measures its real height via `onLayout` into
-`chromeTopRef` so the button always lands just below the header on expand.
+The header (and the tab row below it in `chat-view.tsx`) can be collapsed by the user to give the
+transcript more room. Collapse is **state-driven**: `chromeHidden` mounts/unmounts the header +
+tabs block, so hiding unmounts it and the transcript expands regardless of whether any animation
+renders. Showing mounts the block at full opacity. The **only** toggle is the always-visible
+floating button (`testID="toggle-chrome-button"`, `chromeFloat`/`chromeFloatButton` styles) — the
+header itself has no collapse control. The button sits just below the header+tabs and is **not**
+part of the chrome, so it stays on screen whether the header is shown or hidden. Its `top` is
+driven by the `chromeButtonTop` `Animated.Value`; it rests below the header when visible and moves
+up to just under the status bar when hidden (`insets.top`). The mounted chrome's inner `View`
+(`collapsable={false}`) measures its real height via `onLayout` into `chromeTopRef` so the button
+always lands just below the header on expand.
 
 ### Prop contract
 
@@ -196,8 +195,6 @@ type ChatHeaderProps = {
   onOpenSession: (sessionId: string) => void
   onOpenSessionMenu: () => void
   onToggleConversationMode: () => void
-  onToggleChrome: () => void
-  chromeHidden: boolean
   palette: Palette
   selectedSession?: Session
   sessionMenuVisible: boolean

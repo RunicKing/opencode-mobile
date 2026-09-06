@@ -30,8 +30,6 @@ type ChatHeaderProps = {
   onOpenSession: (sessionId: string) => void;
   onOpenSessionMenu: () => void;
   onToggleConversationMode: () => void;
-  onToggleChrome: () => void;
-  chromeHidden: boolean;
   palette: Palette;
   selectedSession?: Session;
   sessionMenuVisible: boolean;
@@ -59,8 +57,6 @@ export function ChatHeader({
   onOpenSession,
   onOpenSessionMenu,
   onToggleConversationMode,
-  onToggleChrome,
-  chromeHidden,
   palette,
   selectedSession,
   sessionMenuVisible,
@@ -112,11 +108,6 @@ export function ChatHeader({
             icon={conversation.active ? 'phone-hangup' : 'headset'}
             onPress={onToggleConversationMode}
             disabled={connectionStatus !== 'connected' || isCreatingSession}
-          />
-          <Appbar.Action
-            icon={chromeHidden ? 'arrow-collapse-down' : 'arrow-collapse-up'}
-            accessibilityLabel={chromeHidden ? 'Show session header and tabs' : 'Hide session header and tabs'}
-            onPress={onToggleChrome}
           />
         </View>
       </Appbar.Header>
