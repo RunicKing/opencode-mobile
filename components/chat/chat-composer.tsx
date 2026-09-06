@@ -33,7 +33,9 @@ type ChatComposerProps = {
   onRemoveAttachment: (index: number) => void;
   onSend: () => void;
   onToggleAutoApprove: () => void;
+  onToggleChrome: () => void;
   onToggleRecording: () => void;
+  chromeHidden: boolean;
   palette: Palette;
   selectedAgentLabel: string;
   showSendAction: boolean;
@@ -53,6 +55,7 @@ export function ChatComposer({
   currentSessionId,
   commands,
   draft,
+  chromeHidden,
   insetsBottom,
   isCreatingSession,
   isSpeechInputAvailable,
@@ -65,6 +68,7 @@ export function ChatComposer({
   onRemoveAttachment,
   onSend,
   onToggleAutoApprove,
+  onToggleChrome,
   onToggleRecording,
   palette,
   selectedAgentLabel,
@@ -127,6 +131,14 @@ export function ChatComposer({
         />
         <ControlButton active={chatPreferences.autoApprove} iconName={getAutoApproveIcon(chatPreferences.autoApprove)} iconOnly loading={isUpdatingAutoApprove} onPress={onToggleAutoApprove}>
           {chatPreferences.autoApprove ? 'Auto approve enabled' : 'Ask permission'}
+        </ControlButton>
+        <ControlButton
+          active={chromeHidden}
+          iconName={chromeHidden ? 'arrow-collapse-down' : 'arrow-collapse-up'}
+          iconOnly
+          onPress={onToggleChrome}
+          testID="toggle-chrome-button">
+          {chromeHidden ? 'Show session header and tabs' : 'Hide session header and tabs'}
         </ControlButton>
       </View>
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
-  KeyboardAvoidingView,
+  Animated,
   Platform,
   Pressable,
   ScrollView,
@@ -26,6 +26,7 @@ import { scaleTextSize } from '@/constants/appearance';
 import { Fonts } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useFontScale } from '@/hooks/use-font-scale';
+import { useKeyboardInset } from '@/hooks/use-keyboard-inset';
 import type { Pty } from '@/lib/opencode/types';
 import { useOpencode } from '@/providers/opencode-provider';
 
@@ -33,6 +34,7 @@ export default function TerminalScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const palette = useThemeColors();
+  const keyboardInset = useKeyboardInset();
   const fontScale = useFontScale();
   const outputRef = useRef<ScrollView>(null);
   const {
@@ -151,10 +153,8 @@ export default function TerminalScreen() {
 
   return (
     <>
-      <KeyboardAvoidingView
-        style={[styles.screen, { backgroundColor: palette.background }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}>
+      <Animated.View
+        style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
         <Appbar.Header
           style={[styles.header, { backgroundColor: palette.surface, paddingTop: insets.top, height: 64 + insets.top }]}
           statusBarHeight={0}
@@ -260,7 +260,7 @@ export default function TerminalScreen() {
             />
           </View>
         </Surface>
-      </KeyboardAvoidingView>
+      </Animated.View>
       <Snackbar visible={Boolean(error)} onDismiss={() => setError(undefined)}>{error}</Snackbar>
     </>
   );

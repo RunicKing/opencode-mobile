@@ -1,7 +1,7 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Animated, Easing, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { Alert, Animated, Easing, Platform, View } from 'react-native';
 import { Appbar, Button, Card, Snackbar, Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -12,6 +12,7 @@ import { TopTab } from '@/components/chat/chat-controls';
 import { getChatViewStyles } from '@/components/chat/chat-view-styles';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useFontScale } from '@/hooks/use-font-scale';
+import { useKeyboardInset } from '@/hooks/use-keyboard-inset';
 import { type TranscriptEntry } from '@/lib/opencode/format';
 import { getTranscriptActivityLabel, isTranscriptDisplayMessage } from '@/lib/opencode/transcript';
 import { speakText, stopSpeaking } from '@/lib/voice/speech-output';
@@ -22,6 +23,7 @@ export function ChatView() {
   const palette = useThemeColors();
   const styles = getChatViewStyles(useFontScale());
   const insets = useSafeAreaInsets();
+  const keyboardInset = useKeyboardInset();
   const {
     activeSession,
     availableAgents,
@@ -434,10 +436,8 @@ export function ChatView() {
 
   return (
     <>
-      <KeyboardAvoidingView
-        style={[styles.screen, { backgroundColor: palette.background }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}>
+      <Animated.View
+        style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
         <Animated.View
           onLayout={(event) => {
             const height = event.nativeEvent.layout.height;
@@ -563,6 +563,7 @@ export function ChatView() {
           attachments={attachments}
           availableAgents={availableAgents}
           chatPreferences={chatPreferences}
+          chromeHidden={chromeHidden}
           connectionStatus={connection.status}
           conversation={conversation}
           currentSessionId={currentSessionId}
@@ -598,6 +599,7 @@ export function ChatView() {
               .catch((error) => setSendFeedback(error instanceof Error ? error.message : 'Could not update auto-approve.'))
               .finally(() => setIsUpdatingAutoApprove(false));
           }}
+          onToggleChrome={toggleChrome}
           onToggleRecording={() => void handleToggleRecording()}
           palette={palette}
           selectedAgentLabel={selectedAgentLabel}
@@ -605,7 +607,7 @@ export function ChatView() {
           updateChatPreferences={updateChatPreferences}
           visibleModels={visibleModels}
         />
-      </KeyboardAvoidingView>
+      </Animated.View>
 
       <Snackbar visible={Boolean(copiedMessageId)} onDismiss={() => setCopiedMessageId(undefined)} duration={1800}>
         {copiedMessageId === '__send-error__' ? 'Error details copied' : 'Message copied to clipboard'}

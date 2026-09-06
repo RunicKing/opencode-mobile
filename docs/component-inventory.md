@@ -135,7 +135,9 @@ type ChatComposerProps = {
   onRemoveAttachment: (index: number) => void
   onSend: () => void
   onToggleAutoApprove: () => void
+  onToggleChrome: () => void
   onToggleRecording: () => void
+  chromeHidden: boolean
   palette: Palette
   selectedAgentLabel: string
   showSendAction: boolean
@@ -172,7 +174,10 @@ type ChatComposerProps = {
 
 The header (and the tab row below it in `chat-view.tsx`) can be collapsed via a toggle action
 (`onToggleChrome` / `chromeHidden`). `ChatView` animates the height of both down to zero with
-`Animated` and shows a floating `Appbar.Action` (chevron-down) to restore them when hidden.
+`Animated`, and shows a floating `Appbar.Action` (chevron-down) to restore them when hidden. The
+toggle is exposed both as a header `Appbar.Action` and as an always-visible icon
+(`ControlButton`, `testID="toggle-chrome-button"`) in the composer's controls row so it stays usable
+even when the header is hidden.
 
 ### Prop contract
 
