@@ -87,26 +87,50 @@ export function ChatView() {
   const attachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastSentAttachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastAutoSpokenMessageIdRef = useRef<string | undefined>(undefined);
-  const chromeHeight = useRef(new Animated.Value(0)).current;
-  const chromeOpacity = useRef(new Animated.Value(1)).current;
+  const chromeFade = useRef(new Animated.Value(1)).current;
   const chromeButtonTop = useRef(new Animated.Value(0)).current;
-  const chromeMeasuredHeightRef = useRef(0);
-  const chromeInitializedRef = useRef(false);
+  const chromeTopRef = useRef(0);
+  const chromeUnmountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const chromeToggleGenRef = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      if (chromeUnmountTimerRef.current) clearTimeout(chromeUnmountTimerRef.current);
+    };
+  }, []);
 
   function toggleChrome() {
     const next = !chromeHidden;
-    setChromeHidden(next);
-    const full = chromeMeasuredHeightRef.current || 0;
-    const timing = {
-      duration: next ? 240 : 280,
-      easing: next ? Easing.in(Easing.cubic) : Easing.out(Easing.cubic),
+    const gen = chromeToggleGenRef.current + 1;
+    chromeToggleGenRef.current = gen;
+    if (next) {
+      Animated.timing(chromeFade, {
+        toValue: 0,
+        duration: 180,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: true,
+      }).start(() => {
+        if (chromeToggleGenRef.current === gen) setChromeHidden(true);
+      });
+      if (chromeUnmountTimerRef.current) clearTimeout(chromeUnmountTimerRef.current);
+      chromeUnmountTimerRef.current = setTimeout(() => {
+        if (chromeToggleGenRef.current === gen) setChromeHidden(true);
+      }, 300);
+    } else {
+      if (chromeUnmountTimerRef.current) {
+        clearTimeout(chromeUnmountTimerRef.current);
+        chromeUnmountTimerRef.current = null;
+      }
+      chromeFade.setValue(1);
+      setChromeHidden(false);
+    }
+    const full = chromeTopRef.current || 120;
+    Animated.timing(chromeButtonTop, {
+      toValue: next ? insets.top + 6 : full + 6,
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
       useNativeDriver: false,
-    } as const;
-    Animated.parallel([
-      Animated.timing(chromeHeight, { ...timing, toValue: next ? 0 : full }),
-      Animated.timing(chromeOpacity, { ...timing, toValue: next ? 0 : 1 }),
-      Animated.timing(chromeButtonTop, { ...timing, toValue: next ? insets.top + 6 : full + 6 }),
-    ]).start();
+    }).start();
   }
 
   const status = currentSessionId ? sessionStatuses[currentSessionId] : undefined;
@@ -445,23 +469,17 @@ export function ChatView() {
 
   return (
     <>
-      <Animated.View
-        style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
-        <Animated.View
-          style={{ height: chromeHeight, opacity: chromeOpacity, overflow: 'hidden' }}
-          pointerEvents={chromeHidden ? 'none' : 'auto'}>
+<Animated.View
+          style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
+        {chromeHidden ? null : (
+        <Animated.View style={{ opacity: chromeFade }}>
           <View
             collapsable={false}
             onLayout={(event) => {
               const height = event.nativeEvent.layout.height;
-              if (height > 0 && chromeMeasuredHeightRef.current !== height) {
-                chromeMeasuredHeightRef.current = height;
-                if (!chromeInitializedRef.current) {
-                  chromeInitializedRef.current = true;
-                  chromeHeight.setValue(chromeHidden ? 0 : height);
-                  chromeOpacity.setValue(chromeHidden ? 0 : 1);
-                  chromeButtonTop.setValue(chromeHidden ? insets.top + 6 : height + 6);
-                }
+              if (height > 0) {
+                chromeTopRef.current = height;
+                if (!chromeHidden) chromeButtonTop.setValue(height + 6);
               }
             }}>
           <ChatHeader
@@ -498,6 +516,7 @@ export function ChatView() {
           </View>
           </View>
         </Animated.View>
+        )}
 
         <Animated.View
           pointerEvents="box-none"
