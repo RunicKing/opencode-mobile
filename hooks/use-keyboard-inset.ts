@@ -8,28 +8,20 @@ export function useKeyboardInset() {
   const inset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (Platform.OS === 'ios') {
-      const willShow = Keyboard.addListener('keyboardWillShow', (event) => {
-        const next = event.endCoordinates.height;
-        Animated.timing(inset, {
-          toValue: next,
-          duration: event.duration ?? IOS_ANIMATION_DURATION,
-          useNativeDriver: false,
-        }).start();
-      });
-      const willHide = Keyboard.addListener('keyboardWillHide', (event) => {
-        Animated.timing(inset, {
-          toValue: 0,
-          duration: event.duration ?? IOS_ANIMATION_DURATION,
-          useNativeDriver: false,
-        }).start();
-      });
-      return () => {
-        willShow.remove();
-        willHide.remove();
-      };
-    }
-
+    const willShow = Keyboard.addListener('keyboardWillShow', (event) => {
+      Animated.timing(inset, {
+        toValue: event.endCoordinates.height,
+        duration: Platform.OS === 'ios' ? (event.duration ?? IOS_ANIMATION_DURATION) : ANDROID_ANIMATION_DURATION,
+        useNativeDriver: false,
+      }).start();
+    });
+    const willHide = Keyboard.addListener('keyboardWillHide', () => {
+      Animated.timing(inset, {
+        toValue: 0,
+        duration: Platform.OS === 'ios' ? IOS_ANIMATION_DURATION : ANDROID_ANIMATION_DURATION,
+        useNativeDriver: false,
+      }).start();
+    });
     const didShow = Keyboard.addListener('keyboardDidShow', (event) => {
       Animated.timing(inset, {
         toValue: event.endCoordinates.height,
@@ -45,6 +37,8 @@ export function useKeyboardInset() {
       }).start();
     });
     return () => {
+      willShow.remove();
+      willHide.remove();
       didShow.remove();
       didHide.remove();
     };

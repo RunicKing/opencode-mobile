@@ -124,7 +124,6 @@ type ChatComposerProps = {
   connectionStatus: 'idle' | 'connecting' | 'connected' | 'error'
   conversation: { active: boolean; isListening: boolean; phase: string; statusLabel?: string }
   draft: string
-  insetsBottom: number
   isCreatingSession: boolean
   isSpeechInputAvailable: boolean
   isSpeechInputListening: boolean
@@ -135,9 +134,7 @@ type ChatComposerProps = {
   onRemoveAttachment: (index: number) => void
   onSend: () => void
   onToggleAutoApprove: () => void
-  onToggleChrome: () => void
   onToggleRecording: () => void
-  chromeHidden: boolean
   palette: Palette
   selectedAgentLabel: string
   showSendAction: boolean
@@ -175,9 +172,11 @@ type ChatComposerProps = {
 The header (and the tab row below it in `chat-view.tsx`) can be collapsed via a toggle action
 (`onToggleChrome` / `chromeHidden`). `ChatView` animates the height of both down to zero with
 `Animated`, and shows a floating `Appbar.Action` (chevron-down) to restore them when hidden. The
-toggle is exposed both as a header `Appbar.Action` and as an always-visible icon
-(`ControlButton`, `testID="toggle-chrome-button"`) in the composer's controls row so it stays usable
-even when the header is hidden.
+toggle button is in the Session/Files-Changed tabs row (`testID="toggle-chrome-button"`) and
+also as a header `Appbar.Action`. When chrome is hidden, only the floating restore button is
+visible. The chrome height is measured via an inner `View` (`collapsable={false}`) so
+`chromeMeasuredHeightRef` stores the real content height regardless of the animation state,
+which prevents the expand-to-zero bug.
 
 ### Prop contract
 
