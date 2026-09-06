@@ -88,6 +88,7 @@ export function ChatView() {
   const lastSentAttachmentsRef = useRef<{ uri: string; mime?: string; filename?: string }[]>([]);
   const lastAutoSpokenMessageIdRef = useRef<string | undefined>(undefined);
   const chromeHeight = useRef(new Animated.Value(0)).current;
+  const chromeOpacity = useRef(new Animated.Value(1)).current;
   const chromeButtonTop = useRef(new Animated.Value(0)).current;
   const chromeMeasuredHeightRef = useRef(0);
   const chromeInitializedRef = useRef(false);
@@ -103,6 +104,7 @@ export function ChatView() {
     } as const;
     Animated.parallel([
       Animated.timing(chromeHeight, { ...timing, toValue: next ? 0 : full }),
+      Animated.timing(chromeOpacity, { ...timing, toValue: next ? 0 : 1 }),
       Animated.timing(chromeButtonTop, { ...timing, toValue: next ? insets.top + 6 : full + 6 }),
     ]).start();
   }
@@ -445,7 +447,9 @@ export function ChatView() {
     <>
       <Animated.View
         style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
-        <Animated.View style={{ height: chromeHeight, overflow: 'hidden' }}>
+        <Animated.View
+          style={{ height: chromeHeight, opacity: chromeOpacity, overflow: 'hidden' }}
+          pointerEvents={chromeHidden ? 'none' : 'auto'}>
           <View
             collapsable={false}
             onLayout={(event) => {
@@ -455,6 +459,7 @@ export function ChatView() {
                 if (!chromeInitializedRef.current) {
                   chromeInitializedRef.current = true;
                   chromeHeight.setValue(chromeHidden ? 0 : height);
+                  chromeOpacity.setValue(chromeHidden ? 0 : 1);
                   chromeButtonTop.setValue(chromeHidden ? insets.top + 6 : height + 6);
                 }
               }
