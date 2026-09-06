@@ -49,7 +49,7 @@ export function isAccentColorId(value: string | undefined): value is AccentColor
 export const DEFAULT_FONT_SCALE = 1;
 export const FONT_SCALE_MIN = 0.8;
 export const FONT_SCALE_MAX = 1.4;
-export const FONT_SCALE_STEP = 0.1;
+export const FONT_SCALE_STEP = 0.05;
 
 export function clampFontScale(value: number) {
   if (!Number.isFinite(value)) {

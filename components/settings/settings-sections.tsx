@@ -448,10 +448,10 @@ export function VoiceSection({
         <SettingSelectField label="Response scope" onValueChange={(value) => updateChatPreferences({ responseScope: value })} options={responseScopeOptions} palette={palette} selectedValue={selectedResponseScope.value} valueLabel={selectedResponseScope.label} fontScale={fontScale} />
         <HelperText type="info">{selectedResponseScope.description}</HelperText>
         <SettingSwitchRow description="End replies with a short recommendation when there is a clear next move." onValueChange={(value) => updateChatPreferences({ includeNextActions: value })} palette={palette} title="Simple next actions" value={chatPreferences.includeNextActions} />
-        <NumericSlider label="Speech rate" minimum={0.5} maximum={1.5} step={0.1} value={chatPreferences.speechRate} valueLabel={`${chatPreferences.speechRate.toFixed(1)}x`} onValueChange={(speechRate) => updateChatPreferences({ speechRate })} palette={palette} />
+        <NumericSlider label="Speech rate" minimum={0.5} maximum={1.5} step={0.1} value={chatPreferences.speechRate} valueLabel={`${chatPreferences.speechRate.toFixed(1)}x`} formatValue={(speechRate) => `${speechRate.toFixed(1)}x`} onValueChange={(speechRate) => updateChatPreferences({ speechRate })} palette={palette} />
         <SettingSelectField label="Working sound" onValueChange={(value) => updateChatPreferences({ workingSoundVariant: value })} options={workingSoundOptions} palette={palette} selectedValue={selectedWorkingSound.value} valueLabel={selectedWorkingSound.label} fontScale={fontScale} />
         <HelperText type="info">{selectedWorkingSound.description}</HelperText>
-        <NumericSlider label="Working sound volume" minimum={0} maximum={1} step={0.05} value={chatPreferences.workingSoundVolume} valueLabel={`${Math.round(chatPreferences.workingSoundVolume * 100)}%`} onValueChange={(workingSoundVolume) => updateChatPreferences({ workingSoundVolume })} palette={palette} />
+        <NumericSlider label="Working sound volume" minimum={0} maximum={1} step={0.05} value={chatPreferences.workingSoundVolume} valueLabel={`${Math.round(chatPreferences.workingSoundVolume * 100)}%`} formatValue={(workingSoundVolume) => `${Math.round(workingSoundVolume * 100)}%`} onValueChange={(workingSoundVolume) => updateChatPreferences({ workingSoundVolume })} palette={palette} />
         <SettingSelectField
           disabled={isRefreshingSpeechVoices}
           fontScale={fontScale}
@@ -530,6 +530,7 @@ export function AppearanceSection({ appearancePreferences, colorScheme, palette,
           step={FONT_SCALE_STEP}
           value={appearancePreferences.fontScale}
           valueLabel={formatFontScaleLabel(appearancePreferences.fontScale)}
+          formatValue={formatFontScaleLabel}
           onValueChange={(value) => updateAppearancePreferences({ fontScale: value })}
           palette={palette}
         />
@@ -540,6 +541,7 @@ export function AppearanceSection({ appearancePreferences, colorScheme, palette,
 }
 
 function NumericSlider({
+  formatValue,
   label,
   maximum,
   minimum,
@@ -549,6 +551,7 @@ function NumericSlider({
   value,
   valueLabel,
 }: {
+  formatValue?: (value: number) => string;
   label: string;
   maximum: number;
   minimum: number;
@@ -559,27 +562,44 @@ function NumericSlider({
   valueLabel: string;
 }) {
   const [width, setWidth] = useState(0);
-  const percentage = ((value - minimum) / (maximum - minimum)) * 100;
+  const [dragValue, setDragValue] = useState<number | undefined>(undefined);
 
-  function setFromPosition(position: number) {
-    if (!width) return;
+  const displayValue = dragValue ?? value;
+  const percentage = ((displayValue - minimum) / (maximum - minimum)) * 100;
+  const displayLabel = dragValue === undefined || !formatValue ? valueLabel : formatValue(dragValue);
+
+  function snap(position: number) {
+    if (!width) {
+      return value;
+    }
     const raw = minimum + Math.max(0, Math.min(1, position / width)) * (maximum - minimum);
-    onValueChange(Number((Math.round(raw / step) * step).toFixed(2)));
+    return Number((Math.round(raw / step) * step).toFixed(2));
+  }
+
+  function commit(next: number) {
+    setDragValue(undefined);
+    if (next === value) {
+      return;
+    }
+    onValueChange(next);
   }
 
   return (
     <View style={styles.numericSlider}>
       <View style={styles.numericSliderHeader}>
         <Text style={{ color: palette.text }}>{label}</Text>
-        <Text style={{ color: palette.muted }}>{valueLabel}</Text>
+        <Text style={{ color: palette.muted }}>{displayLabel}</Text>
       </View>
       <View
         accessibilityLabel={label}
         accessibilityRole="adjustable"
-        accessibilityValue={{ max: maximum, min: minimum, now: value, text: valueLabel }}
+        accessibilityValue={{ max: maximum, min: minimum, now: displayValue, text: displayLabel }}
         onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
-        onResponderGrant={(event) => setFromPosition(event.nativeEvent.locationX)}
-        onResponderMove={(event) => setFromPosition(event.nativeEvent.locationX)}
+        onResponderGrant={(event) => setDragValue(snap(event.nativeEvent.locationX))}
+        onResponderMove={(event) => setDragValue(snap(event.nativeEvent.locationX))}
+        onResponderRelease={() => commit(dragValue ?? value)}
+        onResponderTerminate={() => commit(dragValue ?? value)}
+        onResponderTerminationRequest={() => false}
         onStartShouldSetResponder={() => true}
         style={[styles.sliderTrack, { backgroundColor: palette.border }]}
       >
@@ -663,12 +683,12 @@ function SettingSelectField<T extends string>({
           ]}>
           <View style={styles.settingSelectFieldContent}>
             <View style={styles.settingSelectTextWrap}>
-              <NativeText style={[styles.settingSelectLabel, { color: palette.muted }]}>{label}</NativeText>
-              <NativeText numberOfLines={1} style={[styles.settingSelectValue, { color: palette.text }]}>
+              <NativeText style={[styles.settingSelectLabel, { color: palette.muted, fontSize: scaleTextSize(12, fontScale) }]}>{label}</NativeText>
+              <NativeText numberOfLines={1} style={[styles.settingSelectValue, { color: palette.text, fontSize: scaleTextSize(16, fontScale) }]}>
                 {valueLabel}
               </NativeText>
             </View>
-            <NativeText style={[styles.settingSelectChevron, { color: palette.muted }]}>v</NativeText>
+            <NativeText style={[styles.settingSelectChevron, { color: palette.muted, fontSize: scaleTextSize(16, fontScale) }]}>v</NativeText>
           </View>
         </Pressable>
       )}

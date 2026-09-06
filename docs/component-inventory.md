@@ -410,7 +410,7 @@ Responsibility:
 Responsibility:
 
 - pick the app accent color from the presets in `constants/appearance.ts`
-- adjust the base text size with a `NumericSlider` over `FONT_SCALE_MIN`–`FONT_SCALE_MAX`
+- adjust the base text size with a `NumericSlider` over `FONT_SCALE_MIN`–`FONT_SCALE_MAX` at `FONT_SCALE_STEP` increments; the slider previews the value locally while dragging and commits once on release
 - render the selected accent label as helper text
 - write both values through `updateAppearancePreferences`
 

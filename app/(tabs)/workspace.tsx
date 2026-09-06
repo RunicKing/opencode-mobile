@@ -310,7 +310,7 @@ export default function WorkspaceScreen() {
                     multiline
                     value={editingFile.value}
                     onChangeText={(value) => setEditingFile({ ...editingFile, value })}
-                    style={[styles.fileEditor, styles.code]}
+                    style={[styles.fileEditor, styles.code, { fontSize: scaleTextSize(12, fontScale), lineHeight: scaleTextSize(18, fontScale) }]}
                   />
                   <View style={styles.inlineActions}>
                     <Button
