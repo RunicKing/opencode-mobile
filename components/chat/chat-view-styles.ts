@@ -55,7 +55,6 @@ export function getChatViewStyles(fontScale: number) {
   sectionStack: { gap: 12 },
   sectionCard: { borderRadius: 18 },
   sectionHeaderCard: { flexDirection: 'row', justifyContent: 'space-between', gap: 12, alignItems: 'center' },
-  paginationRow: { alignItems: 'center', paddingVertical: 4 },
   loadingRow: { flexDirection: 'row', gap: 10, alignItems: 'center', paddingHorizontal: 8, paddingBottom: 8 },
   composer: {
     paddingHorizontal: 12,
@@ -86,7 +85,6 @@ export function getChatViewStyles(fontScale: number) {
   voiceStatusChip: { alignSelf: 'flex-start' },
   composerVoiceButton: { margin: 0, alignSelf: 'center' },
   composerPrimaryButton: { margin: 0, width: 44, height: 44, borderRadius: 999, alignSelf: 'center' },
-  composerActionButton: { margin: 0 },
   sendErrorCard: { marginHorizontal: 12, marginBottom: 12, borderRadius: 16 },
   sendErrorContent: { gap: 8 },
   sendErrorActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 4 },
