@@ -442,10 +442,9 @@ export function ChatView() {
 <Animated.View
           style={[styles.screen, { backgroundColor: palette.background, paddingBottom: keyboardInset }]}>
         {chromeHidden ? null : (
-        <View key="chrome-block">
-          <View
-            collapsable={false}
-            onLayout={(event) => {
+        <View
+          collapsable={false}
+          onLayout={(event) => {
               const height = event.nativeEvent.layout.height;
               if (height > 0) {
                 chromeTopRef.current = height;
@@ -484,7 +483,7 @@ export function ChatView() {
             <TopTab active={activeTab === 'session'} label="Session" onPress={() => setActiveTab('session')} />
             <TopTab active={activeTab === 'changes'} label={`${diffCount} Files Changed`} onPress={() => setActiveTab('changes')} />
           </View>
-          </View>
+        </View>
         )}
 
         <Animated.View
