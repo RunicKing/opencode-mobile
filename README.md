@@ -21,7 +21,7 @@
 >   or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
 
 [![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/app.getopencode)
-[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
+[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-toggle-and-gap-fixes/opencode-mobile-chrome-toggle-and-gap-fixes.apk)
 
 
 **Your OpenCode server, in your pocket.**
@@ -46,10 +46,9 @@ user-facing features, both by the big-pickle AI:
 - **Smooth keyboard** — the message-box area stays visible while the on-screen
   keyboard is open, and opening/closing it no longer "jitters" for a few
   seconds.
-- **Collapsible chat header** — a button on the conversation tab (and in the
-  composer's controls row) hides the session header and the Session /
-  Files-Changed tab row with a smooth animation, reclaiming screen space (a
-  floating button brings them back).
+- **Collapsible chat header** — a button in the Session / Files-Changed tab row
+  hides the session header and that tab row with a smooth animation, reclaiming
+  screen space (a floating button brings them back).
 
 A full changelog and install notes live with each
 **[release](https://github.com/RunicKing/opencode-mobile/releases)**.
@@ -60,12 +59,13 @@ signature mismatch).
 
 Older builds:
 
+- [Keyboard Composer & Toggle Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
 - [Chrome Hide & Keyboard Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
 - [Font Scale Fixes Edition APK (smooth text-size slider)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
 - [Full Color Themes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
 - [Appearance Edition APK (accents + font size, no full theming)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
 
-[![Download APK (this fork, Keyboard Fixes Edition)](https://img.shields.io/badge/Download-opencode--mobile--keyboard--composer--toggle--fixes--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
+[![Download APK (this fork, Chrome Toggle & Gap Fixes Edition)](https://img.shields.io/badge/Download-opencode--mobile--chrome--toggle--and--gap--fixes--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-toggle-and-gap-fixes/opencode-mobile-chrome-toggle-and-gap-fixes.apk)
 
 ## Why OpenCode Mobile?
 
@@ -80,7 +80,8 @@ Older builds:
 ### For Users
 
 1. **Download the app**:
-   - [This fork: Keyboard Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
+   - [This fork: Chrome Toggle & Gap Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-toggle-and-gap-fixes/opencode-mobile-chrome-toggle-and-gap-fixes.apk)
+   - [This fork: Keyboard Composer & Toggle Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
    - [This fork: Chrome Hide & Keyboard Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
    - [This fork: Font Scale Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
    - [This fork: Full Color Themes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
