@@ -1,5 +1,17 @@
 # OpenCode Mobile
 
+> ## ⚠️ AI-authored fork disclaimer
+>
+> **This repository is a community fork of the upstream [OpenCode Mobile](https://github.com/alvarolorentedev/opencode-mobile).**
+> The additional changes in this fork were written **entirely by Big Pickle, an AI model**, working with a human operator. Specifically:
+>
+> - **All non-upstream code, tests, and documentation changes were authored or composed by the Big Pickle AI model.**
+> - These changes have **not** been reviewed by the upstream maintainers.
+> - **Things could be buggy.** Behavior may differ from the official Google Play build, and non-brand color themes use heuristically derived Material 3 tone mappings that may not look pixel-perfect on every screen.
+> - The core app is unchanged from upstream; only the *appearance* features described in this README were added on top.
+> - **Use at your own risk.** This fork is provided as-is with no warranties.
+> - For the official, reviewed release, use the upstream [app on Google Play](https://play.google.com/apps/testing/app.getopencode) or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
+
 <p align="center">
   <strong>Your OpenCode workflow, in your pocket.</strong>
 </p>
