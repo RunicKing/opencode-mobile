@@ -1,0 +1,172 @@
+# Task Recipes
+
+Short, opinionated paths for the changes agents make most often. Each recipe
+lists only what to read, what to edit, and how to validate. The linked docs
+remain authoritative; this page is the checklist.
+
+Back to the [engineering index](README.md) · [documentation hub](../README.md).
+
+## Before any commit
+
+**When:** creating or amending any commit, including docs and follow-up fixes.
+
+**Validate:**
+
+```bash
+npm run validate:commit
+```
+
+Then run the owning focused checks from the [validation strategy](validation/strategy.md#test-selection-matrix).
+Protocol/fake-server changes also run `npm run test:fake-server:self`, UI flow
+changes run the affected Playwright spec, and localization changes run
+`npm run gen:i18n` plus the strict i18n test.
+
+**Blocked:** if any required command fails, or the toolchain cannot run it
+(wrong Node version, missing package manager or browser), do not commit. Fix the
+toolchain or ask for help. Do not commit to see what CI reports, and do not
+amend a commit to hide a failed check.
+
+**Done:** the final summary lists each command and its result, plus any check
+that could not run and why.
+
+## Translations
+
+**When:** you add or change a user-facing string.
+
+**Read only:** [design system § Accessibility, localization and feature acceptance](../design/design-system.md#accessibility-localization-and-feature-acceptance) and `shared/i18n/languages.ts`.
+
+**Edit:**
+
+1. Add the key to `shared/i18n/locales/en/<namespace>.json`.
+2. Add the same key to every locale folder in `shared/i18n/locales/<code>/<namespace>.json`.
+   Preserve `{{interpolation}}` names and the plural suffixes the locale requires.
+3. Add a new language to `SUPPORTED_LANGUAGES` in `shared/i18n/languages.ts` and to
+   `supportedLocales` in `app.config.ts`.
+4. Run `npm run gen:i18n` to regenerate `shared/i18n/resources.ts`.
+
+**Validate:**
+
+```bash
+npm run gen:i18n
+npx vitest run shared/i18n/__tests__/i18n.test.ts
+```
+
+Use `npm run test:i18n:loose` only while iterating. Strict parity is required
+before the change is complete.
+
+**Done:** every supported locale has the key, placeholders match, plural
+categories match, and the generated registry is committed.
+
+**Pitfalls:** English-only keys, renamed placeholders, missing plural suffixes,
+and editing `resources.ts` by hand.
+
+## Settings section or row
+
+**When:** you add a settings section, row, toggle, or search target.
+
+**Read only:** [design system § Settings organization and search](../design/design-system.md#settings-organization-and-search), [component inventory § Settings](../design/components/settings.md#settings-components), and [Storybook § Adding a story](../design/storybook.md#adding-a-story) when the control is reusable.
+
+**Edit:**
+
+1. Add or extend the section in `features/settings/ui/sections/`.
+2. Register it in `features/settings/ui/settings-section-registry.tsx`; add
+   search keywords/targets through the registry or `settings-search.ts`.
+3. Reuse `shared/ui/settings/setting-rows.tsx`; use `usePalette()` and
+   design tokens, never literal colors.
+4. Persist a preference through `shared/preferences/opencode-preferences.ts` or
+   `shared/storage/persisted-preferences.ts`; do not keep domain state in the component.
+5. Add the strings to every locale (see [Translations](#translations)).
+6. Add a Storybook story for a reusable control.
+7. Extend `tests/e2e/settings.spec.mjs` when the flow changes.
+
+**Validate:**
+
+```bash
+npm run build:storybook
+npx playwright test tests/e2e/settings.spec.mjs
+npm run test:ci:static
+```
+
+**Done:** the section is searchable, the preference survives relaunch, the
+control has a story if reusable, and the settings flow passes.
+
+**Pitfalls:** local copies of provider state, search indexing current values or
+credentials, and one-off controls that duplicate `setting-rows.tsx`.
+
+## Fake-server scenario and E2E flow
+
+**When:** the client contract changes, or you need a deterministic server state
+for a flow.
+
+**Read only:** [fake server](validation/fake-server.md) and
+[E2E flow coverage](validation/e2e.md).
+
+**Edit:**
+
+1. Add or extend the state in `tests/fake-opencode/state.mjs`.
+2. Add canonical data in `tests/fake-opencode/fixtures.mjs`.
+3. Implement the route or event in `tests/fake-opencode/server.mjs`.
+4. Add the contract assertion to `tests/fake-opencode/self-test.mjs`.
+5. Add a `resetScenario` case in `tests/e2e/helpers/flows.mjs` if the scenario
+   needs an explicit reset. Do not rely on the previous test leaving state
+   behind; the shared fixture resets the worker backend before every test.
+6. Extend the owning `tests/e2e/<domain>.spec.mjs`; add a new spec file only
+   when no existing domain owns the flow, and update
+   `tests/e2e/budget.json` with a justification.
+7. Use an explicit readiness signal. Do not add `waitForTimeout`, retries, or a
+   larger timeout to hide a race; see [E2E determinism rules](validation/e2e.md#determinism-rules).
+
+**Validate:**
+
+```bash
+npm run test:fake-server:self
+npx playwright test tests/e2e/<domain>.spec.mjs
+npm run test:e2e:budget
+npm run test:e2e:web   # when the change affects the full flow; CI runs smoke on push
+```
+
+**Human validation:** any change under `tests/e2e/` or `tests/fake-opencode/`
+requires explicit human validation, even when the automated checks pass.
+
+**Done:** the scenario is deterministic, V1/V2 behavior stays aligned where the
+feature is in the supported intersection, and the flow fails without the change.
+
+**Pitfalls:** weakening an existing scenario, relying on wall-clock timing,
+sharing fixed ports across concurrent runs, and testing only the happy path.
+
+## Provider state field or endpoint
+
+**When:** you add or change provider-owned state, a session field, or an API
+endpoint consumed by the app.
+
+**Read only:** [state and data § State Ownership Overview](../architecture/state-and-data.md#state-ownership-overview) and the owning domain section; [architecture § Module Map](../architecture/overview.md#module-map); [API contract](../architecture/api-contract.md) for endpoint changes.
+
+**Edit in this order:**
+
+1. Public type: `shared/contracts/domain.ts`.
+2. Value assembly: `runtime/composition/opencode-provider-values.ts`.
+3. Domain wiring: `runtime/composition/use-opencode-provider-composition.ts` and the
+   owning domain hook.
+4. Persistence: `runtime/persistence/use-opencode-persistence.ts` and
+   `shared/storage/persistence-hydration.ts` only if the field survives relaunch.
+5. Context exposure: `features/chat/context.ts` and the domain context type.
+6. Derived data: `features/sessions/model/selectors.ts`; never duplicate
+   provider-derived state in a component.
+7. Fake server: `tests/fake-opencode/` for the new endpoint or field.
+8. Tests: targeted Vitest, then E2E if the user flow changed.
+
+**Validate:**
+
+```bash
+npx vitest run runtime/__tests__/provider-runtime.test.ts runtime/__tests__/persistence-hydration.test.ts
+npm run test:fake-server:self
+npx playwright test tests/e2e/<domain>.spec.mjs
+```
+
+**Done:** the field has one owner, hydration is covered if persisted, the
+context surface stays within the architecture ratchet, and the fake server
+matches the client contract.
+
+**Pitfalls:** adding a second source of truth, widening the context past the
+ratchet, fetching from a component, adding a V1 fallback, and changing a
+persisted key without a hydration test.

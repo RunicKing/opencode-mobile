@@ -1,0 +1,3 @@
+@import 'tailwindcss';
+@import 'uniwind';
+@import './shared/ui/theme/ui-tokens.generated.css';

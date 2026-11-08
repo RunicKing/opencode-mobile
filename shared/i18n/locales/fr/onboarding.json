@@ -1,0 +1,91 @@
+{
+  "welcome": {
+    "title": "OpenCode Mobile",
+    "subtitle": "Vos projets OpenCode, où que vous soyez.",
+    "body": "OpenCode Mobile amène votre serveur OpenCode sur votre téléphone. Discutez avec des agents de programmation, suivez leur travail et consultez les modifications dans vos projets.",
+    "start": "Continuer",
+    "points": {
+      "server": {
+        "title": "Votre serveur fait le travail",
+        "description": "Les modèles et les tâches s’exécutent sur votre serveur OpenCode. Cette app vous y connecte."
+      },
+      "project": {
+        "title": "Projets et conversations",
+        "description": "Les projets regroupent les chats, les fichiers et les modifications."
+      },
+      "optional": {
+        "title": "Voix et suivi des tâches",
+        "description": "La saisie vocale et les notifications de fin vous aident à suivre le travail en déplacement."
+      }
+    }
+  },
+  "connect": {
+    "skip": "Passer"
+  },
+  "project": {
+    "title": "Choisissez un projet",
+    "subtitle": "Choisissez un projet pour commencer ou ajoutez un dossier sur le serveur.",
+    "continue": "Continuer",
+    "skip": "Passer",
+    "empty": "Ce serveur n’a signalé aucun projet. Ajoutez un dossier sur le serveur pour commencer.",
+    "loading": "Chargement des projets…",
+    "noMatches": "Aucun projet ne correspond à « {{query}} »."
+  },
+  "permissions": {
+    "title": "Autorisations",
+    "subtitle": "Facultatif. OpenCode Mobile ne demande que lorsque vous choisissez d’activer quelque chose.",
+    "skip": "Passer",
+    "continue": "Continuer",
+    "notifications": {
+      "title": "Notifications",
+      "body": "Autorisez OpenCode Mobile à vous notifier lorsqu’une tâche se termine alors que l’app est en arrière-plan.",
+      "unsupported": "Les notifications ne sont pas disponibles sur cette plateforme.",
+      "enable": "Activer les notifications",
+      "battery": "Vérifier les réglages de batterie et d’arrière-plan"
+    },
+    "voice": {
+      "title": "Saisie vocale",
+      "body": "L’accès au microphone vous permet de dicter vos requêtes au lieu de les taper.",
+      "unsupported": "La saisie vocale n’est pas disponible sur cet appareil.",
+      "enable": "Activer la saisie vocale",
+      "deniedHint": "Vous pouvez activer la saisie vocale plus tard dans Réglages › Voix."
+    },
+    "checking": "Vérification…"
+  },
+  "ready": {
+    "title": "Tout est prêt",
+    "subtitle": "Vérifiez votre configuration et commencez à coder.",
+    "server": "Serveur",
+    "project": "Projet",
+    "projectMissing": "Aucun projet sélectionné",
+    "footnote": "Vous pouvez modifier ces paramètres à tout moment.",
+    "start": "Commencer à coder",
+    "done": "Terminé",
+    "serverMissing": "Non connecté",
+    "providers": "Fournisseurs",
+    "enabledModels": "Modèles activés"
+  },
+  "settingsAssistant": {
+    "summary": "Vérifier les autorisations, la connexion, les fournisseurs, le projet, la voix et les préférences"
+  },
+  "reviewSetup": "Revoir la configuration",
+  "stepIndicator": "Étape {{step}} sur {{totalSteps}}",
+  "general": {
+    "title": "Paramètres généraux",
+    "subtitle": "Adaptez OpenCode Mobile à vos préférences."
+  },
+  "voice": {
+    "title": "Voix et réponses",
+    "subtitle": "Choisissez comment parler et écouter les réponses.",
+    "input": "Saisie vocale",
+    "playback": "Réponses vocales",
+    "responses": "Style de réponse",
+    "autoPlay": "Lire les réponses à voix haute",
+    "confirm": "Confirmer les commandes",
+    "wakeRequired": "Phrase d’activation"
+  },
+  "privacy": {
+    "title": "Confidentialité",
+    "subtitle": "Choisissez ce qui reste sur cet appareil et ce qui peut être partagé."
+  }
+}

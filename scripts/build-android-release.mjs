@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { Buffer } from 'node:buffer';
 import { spawnSync } from 'node:child_process';
@@ -41,14 +42,105 @@ function run(command, args, options = {}) {
 const repoRoot = process.cwd();
 const androidDir = path.join(repoRoot, 'android');
 const keystorePath = path.join(androidDir, 'release.keystore');
+const gradlePropertiesPath = path.join(androidDir, 'gradle.properties');
 
-run('npx', ['expo', 'prebuild', '--platform', 'android', '--non-interactive', '--clean'], {
+// Signing credentials are injected through gradle.properties instead of -P
+// arguments so they never appear in the process list or in the command echoed
+// by `run()` on failure. The generated file is restored on exit.
+let gradlePropertiesBackup;
+let gradlePropertiesDirty = false;
+
+// Java properties values only need `\`, newlines, and a leading space escaped;
+// `=`, `:`, `#`, and `!` are literal once the key/value separator has passed.
+function escapePropertiesValue(value) {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')
+    .replace(/^ /, '\\ ');
+}
+
+function writeSigningProperties(props) {
+  gradlePropertiesBackup = fs.readFileSync(gradlePropertiesPath);
+  const lines = Object.entries(props).map(([key, value]) => `${key}=${escapePropertiesValue(value)}`);
+  fs.appendFileSync(gradlePropertiesPath, `\n# Injected release signing (scripts/build-android-release.mjs)\n${lines.join('\n')}\n`);
+  gradlePropertiesDirty = true;
+}
+
+function restoreGradleProperties() {
+  if (gradlePropertiesDirty && gradlePropertiesBackup) {
+    fs.writeFileSync(gradlePropertiesPath, gradlePropertiesBackup);
+    gradlePropertiesDirty = false;
+  }
+}
+
+process.on('exit', restoreGradleProperties);
+process.on('SIGINT', () => process.exit(130));
+process.on('SIGTERM', () => process.exit(143));
+
+// The script pins the Expo variant so a conflicting EXPO_APP_VARIANT in the
+// caller's environment cannot leak into Gradle. FOSS is selected through a
+// dedicated flavor switch rather than overloading EXPO_APP_VARIANT.
+const buildFlavor = process.env.OPENCODE_BUILD_FLAVOR?.trim() || 'production';
+const appVariant = buildFlavor === 'foss' ? 'foss' : 'production';
+const isFossVariant = appVariant === 'foss';
+const buildEnv = {
+  ...process.env,
+  EXPO_APP_VARIANT: appVariant,
+  ...(isFossVariant
+    ? {
+        EXPO_PUBLIC_FOSS: '1',
+        // Pin the FOSS package id so a local `.env` EXPO_ANDROID_PACKAGE cannot
+        // override it (shell env wins over Expo's .env loading).
+        EXPO_ANDROID_PACKAGE: process.env.EXPO_ANDROID_PACKAGE || 'app.getopencode.fdroid',
+      }
+    : {}),
+};
+
+const packageJsonPath = path.join(repoRoot, 'package.json');
+let packageJsonBackup;
+
+function restorePackageJson() {
+  if (packageJsonBackup) {
+    fs.writeFileSync(packageJsonPath, packageJsonBackup);
+    packageJsonBackup = undefined;
+  }
+}
+
+if (isFossVariant) {
+  process.on('exit', restorePackageJson);
+
+  if (!buildEnv.FIREBASE_STUB_SRC_DIR?.trim()) {
+    const stubRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'opencode-firebase-stubs-'));
+    process.on('exit', () => fs.rmSync(stubRoot, { recursive: true, force: true }));
+    run('git', ['clone', '--no-checkout', 'https://gitlab.com/freed-by-fdroid/firebase-stubs.git', stubRoot]);
+    run('git', ['checkout', '--detach', 'ce90a956aacda17a85c60577ee443aeb83d876ef'], { cwd: stubRoot });
+    buildEnv.FIREBASE_STUB_SRC_DIR = path.join(stubRoot, 'firebase-messaging', 'src');
+  }
+
+  // Shared with the fdroiddata recipe (scripts/foss-prepare.mjs) so upstream and
+  // F-Droid apply byte-identical dependency patches. It edits package.json, so
+  // back it up and restore it once the build finishes.
+  packageJsonBackup = fs.readFileSync(packageJsonPath);
+  run('node', [path.join(repoRoot, 'scripts', 'foss-prepare.mjs')], { cwd: repoRoot, env: buildEnv });
+}
+
+// Expo SDK 54+ deprecated --non-interactive; CI=1 forces the same non-interactive mode.
+run('npx', ['expo', 'prebuild', '--platform', 'android', '--clean'], {
   cwd: repoRoot,
-  env: {
-    ...process.env,
-    EXPO_APP_VARIANT: 'production',
-  },
+  env: { ...buildEnv, CI: '1' },
 });
+
+// Release artifacts are ARM64-only. The config plugin writes the Gradle
+// property; assert it here so a prebuild regression cannot silently reintroduce
+// 32-bit or emulator ABIs.
+const generatedGradleProperties = fs.readFileSync(gradlePropertiesPath, 'utf8');
+if (!/^reactNativeArchitectures=arm64-v8a$/m.test(generatedGradleProperties)) {
+  fail('Generated android/gradle.properties must set reactNativeArchitectures=arm64-v8a for release builds.');
+}
+if (!/^AsyncStorage_db_size_in_MB=64$/m.test(generatedGradleProperties)) {
+  fail('Generated android/gradle.properties must set AsyncStorage_db_size_in_MB=64 for release builds.');
+}
 
 const keystorePassword = requireEnv('ANDROID_KEYSTORE_PASSWORD');
 const keyAlias = requireEnv('ANDROID_KEY_ALIAS');
@@ -88,32 +180,31 @@ try {
   console.warn('Unable to compute keystore hash for debugging:', e?.message ?? e);
 }
 
-// Pass signing props to Gradle. The Android Gradle Plugin will pick these up
-// during non-interactive CI builds.
 // Detect keystore type (pkcs12 vs jks). keytool can list a keystore with a
-// specific storetype; try pkcs12 first and fall back to jks.
-function runKeytoolList(keystoreFile, password, storetype) {
+// specific storetype; try pkcs12 first and fall back to jks. The password is
+// read from the environment via `-storepass:env` so it never enters argv.
+function runKeytoolList(keystoreFile, storetype) {
   try {
     const proc = spawnSync('keytool', [
       '-list',
       '-keystore',
       keystoreFile,
-      '-storepass',
-      password,
+      '-storepass:env',
+      'ANDROID_KEYSTORE_PASSWORD',
       '-storetype',
       storetype,
-    ], { encoding: 'utf8' });
+    ], { encoding: 'utf8', env: process.env });
     return { status: proc.status, stdout: proc.stdout || '', stderr: proc.stderr || '' };
   } catch (e) {
     return { status: 1, stdout: '', stderr: String(e) };
   }
 }
 
-function validateKeystore(keystoreFile, password) {
+function validateKeystore(keystoreFile) {
   // Try pkcs12 then jks
   const tried = [];
   for (const t of ['pkcs12', 'jks']) {
-    const res = runKeytoolList(keystoreFile, password, t);
+    const res = runKeytoolList(keystoreFile, t);
     tried.push({ type: t, res });
     if (res.status === 0) {
       // parse aliases from stdout
@@ -130,7 +221,7 @@ function validateKeystore(keystoreFile, password) {
   return { storeType: undefined, tried };
 }
 
-const validation = validateKeystore(keystorePath, keystorePassword);
+const validation = validateKeystore(keystorePath);
 if (validation.storeType) {
   console.log(`Detected keystore type: ${validation.storeType}`);
   if (validation.aliases && validation.aliases.length) {
@@ -164,16 +255,28 @@ if (detectedStoreType === 'pkcs12') {
   effectiveKeyPassword = keystorePassword;
 }
 
-run('./gradlew', [
-  'bundleRelease',
-  'assembleRelease',
-  `-Pandroid.injected.signing.store.file=${keystorePath}`,
-  `-Pandroid.injected.signing.store.password=${keystorePassword}`,
-  `-Pandroid.injected.signing.key.alias=${keyAlias}`,
-  `-Pandroid.injected.signing.key.password=${effectiveKeyPassword}`,
-  ...(detectedStoreType ? [`-Pandroid.injected.signing.store.type=${detectedStoreType}`] : []),
-], {
-  cwd: androidDir,
+// The FOSS build produces an ARM64 APK for the F-Droid package. The Play build
+// produces both the AAB and APK in one Gradle invocation.
+const gradleTasks = isFossVariant ? ['assembleRelease'] : ['bundleRelease', 'assembleRelease'];
+
+// Pass signing props to Gradle via gradle.properties. The Android Gradle Plugin
+// picks up `android.injected.signing.*` during non-interactive builds.
+writeSigningProperties({
+  'android.injected.signing.store.file': keystorePath,
+  'android.injected.signing.store.password': keystorePassword,
+  'android.injected.signing.key.alias': keyAlias,
+  'android.injected.signing.key.password': effectiveKeyPassword,
+  ...(detectedStoreType ? { 'android.injected.signing.store.type': detectedStoreType } : {}),
 });
 
-console.log('Android production build complete.');
+run('./gradlew', [
+  ...gradleTasks,
+  // ARM64-only is a product decision. There is no per-build ABI override:
+  // Play, FOSS and local release builds all produce the same ABI.
+  '-PreactNativeArchitectures=arm64-v8a',
+], {
+  cwd: androidDir,
+  env: buildEnv,
+});
+
+console.log(`Android ${appVariant} build complete.`);

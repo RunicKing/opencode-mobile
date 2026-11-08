@@ -1,0 +1,90 @@
+import { getFormatLocale } from '@/shared/i18n/index';
+
+export function formatTimestamp(value: number, locale = getFormatLocale()) {
+  try {
+    if (typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function') {
+      return new Intl.DateTimeFormat(locale, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      }).format(value);
+    }
+  } catch {
+    // Fall back below.
+  }
+
+  return new Date(value).toLocaleString();
+}
+
+// Message headers keep only the time for today so the author label and actions
+// keep their space on narrow screens; older messages keep the date.
+export function formatMessageTime(value: number, now = Date.now(), locale = getFormatLocale()) {
+  const date = new Date(value);
+  const today = new Date(now);
+  const sameDay = date.getFullYear() === today.getFullYear()
+    && date.getMonth() === today.getMonth()
+    && date.getDate() === today.getDate();
+  const options: Intl.DateTimeFormatOptions = sameDay
+    ? { timeStyle: 'short' }
+    : { dateStyle: 'medium', timeStyle: 'short' };
+  try {
+    if (typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function') {
+      return new Intl.DateTimeFormat(locale, options).format(value);
+    }
+  } catch {
+    // Fall back below.
+  }
+
+  return sameDay ? date.toLocaleTimeString() : date.toLocaleString();
+}
+
+// Compact duration for timeline rows. Whole seconds only; minute+ durations
+// keep the same `1m 05s` shape so the row width stays predictable.
+export function formatDuration(durationMs: number) {
+  const totalSeconds = Math.max(0, Math.round(durationMs / 1000));
+  if (totalSeconds < 60) {
+    return `${totalSeconds}s`;
+  }
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return seconds > 0 ? `${minutes}m ${String(seconds).padStart(2, '0')}s` : `${minutes}m`;
+}
+
+export function formatRelativeTime(value: number) {
+  const diffMs = value - Date.now();
+  const diffMinutes = Math.round(diffMs / 60000);
+
+  if (Math.abs(diffMinutes) < 1) {
+    return 'just now';
+  }
+
+  if (Math.abs(diffMinutes) < 60) {
+    return formatRelative(diffMinutes, 'minute');
+  }
+
+  const diffHours = Math.round(diffMinutes / 60);
+  if (Math.abs(diffHours) < 24) {
+    return formatRelative(diffHours, 'hour');
+  }
+
+  const diffDays = Math.round(diffHours / 24);
+  return formatRelative(diffDays, 'day');
+}
+
+function formatRelative(value: number, unit: 'minute' | 'hour' | 'day') {
+  try {
+    if (typeof Intl !== 'undefined' && typeof Intl.RelativeTimeFormat === 'function') {
+      return new Intl.RelativeTimeFormat(getFormatLocale(), { numeric: 'auto' }).format(value, unit);
+    }
+  } catch {
+    // Fall back below.
+  }
+
+  if (value === 0) {
+    return 'just now';
+  }
+
+  const absolute = Math.abs(value);
+  const suffix = absolute === 1 ? unit : `${unit}s`;
+  return value < 0 ? `${absolute} ${suffix} ago` : `in ${absolute} ${suffix}`;
+}

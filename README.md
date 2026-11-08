@@ -1,192 +1,237 @@
 # OpenCode Mobile
 
-> ## ⚠️ AI-authored fork disclaimer
->
-> **This repository is a community fork of the upstream
-> [OpenCode Mobile](https://github.com/alvarolorentedev/opencode-mobile).**
-> The additional changes in this fork were written **entirely by Big Pickle, an
-> AI model**, working with a human operator. Specifically:
->
-> - **All non-upstream code, tests, and documentation changes were authored or
->   composed by the Big Pickle AI model.**
-> - These changes have **not** been reviewed by the upstream maintainers.
-> - **Things could be buggy.** Behavior may differ from the official Google Play
->   build, and non-brand color themes use heuristically derived Material 3 tone
->   mappings that may not look pixel-perfect on every screen.
-> - The core app is unchanged from upstream; only the *appearance* features
->   described in this README were added on top.
-> - **Use at your own risk.** This fork is provided as-is with no warranties.
-> - For the official, reviewed release, use the upstream
->   [app on Google Play](https://play.google.com/apps/testing/app.getopencode)
->   or the [upstream release](https://github.com/alvarolorentedev/opencode-mobile/releases).
+<p align="center">
+  <strong>Your OpenCode workflow, in your pocket.</strong>
+</p>
 
-[![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/app.getopencode)
-[![Download APK (this fork)](https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-only/opencode-mobile-floating-toggle-only.apk)
+<p align="center">
+  Start tasks, check progress, review changes, use the terminal, speak follow-ups, and manage OpenCode workspaces from Android and iOS.
+</p>
 
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=app.getopencode">
+    <img src="https://img.shields.io/badge/Get_it_on-Google_Play-4285F4?style=for-the-badge&logo=googleplay&logoColor=white" alt="Get it on Google Play">
+  </a>
+  <a href="https://testflight.apple.com/join/ddcE5Wzz">
+    <img src="https://img.shields.io/badge/Join_iOS_Beta-TestFlight-0D96F6?style=for-the-badge&logo=apple&logoColor=white" alt="Join iOS TestFlight">
+  </a>
+  <a href="https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk">
+    <img src="https://img.shields.io/badge/Download-APK-18A748?style=for-the-badge&logo=android&logoColor=white" alt="Download APK">
+  </a>
+</p>
 
-**Your OpenCode server, in your pocket.**
-
-OpenCode Mobile brings the full power of your self-hosted OpenCode AI assistant to your Android device. Chat with your models, manage conversations, and stay productive anywhere.
-
-## This fork: what changed (Full Color Themes Edition)
-
-This fork adds a **Settings → Appearance** section on top of upstream with two
-user-facing features, both by the big-pickle AI:
-
-- **Full color themes** — choose between Brand green (default, matches the
-  stock look), Ocean blue, Violet, Rose, or Amber. The chosen theme is applied
-  **everywhere**, not just to highlights: the background, cards, surfaces,
-  borders, muted text, chat bubbles, tabs, navigation chrome, and the
-  conversation/voice screen all follow it in light and dark mode.
-- **Text-size slider** — scale the base text size from **80% to 140%** so it
-  applies almost everywhere, including chat cards, diffs, markdown, the model
-  picker, settings rows, the terminal, workspace files, and tab labels. The
-  slider is smooth: it previews the size live while you drag and commits once
-  on release (0.05 steps).
-- **Smooth keyboard** — the message-box area stays visible while the on-screen
-  keyboard is open, and opening/closing it no longer "jitters" for a few
-  seconds.
-- **Collapsible chat header** — hide the session header and the Session /
-  Files-Changed tab row with a smooth animation, reclaiming screen space. The
-  toggle is an always-visible floating button that stays on screen whether the
-  header is shown or hidden and auto-adapts as the header collapses/expands.
-
-A full changelog and install notes live with each
-**[release](https://github.com/RunicKing/opencode-mobile/releases)**.
-
-**Install:** download the APK below, and if you previously installed a build
-signed with a different key, uninstall it first (Android will reject a
-signature mismatch).
-
-Older builds:
-
-- [No-Memo Chrome Toggle Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
-- [State-Driven Chrome Toggle Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-state-driven-chrome-toggle/opencode-mobile-state-driven-chrome-toggle.apk)
-- [Composer Lift & Chrome Toggle Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-composer-lift-and-chrome-toggle/opencode-mobile-composer-lift-and-chrome-toggle.apk)
-- [Floating Toggle & Keyboard Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-and-keyboard-fixes/opencode-mobile-floating-toggle-and-keyboard-fixes.apk)
-- [Chrome Toggle & Gap Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-toggle-and-gap-fixes/opencode-mobile-chrome-toggle-and-gap-fixes.apk)
-- [Keyboard Composer & Toggle Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
-- [Chrome Hide & Keyboard Fixes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
-- [Font Scale Fixes Edition APK (smooth text-size slider)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
-- [Full Color Themes Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
-- [Appearance Edition APK (accents + font size, no full theming)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
-
-[![Download APK (this fork, Floating Toggle Only Edition)](https://img.shields.io/badge/Download-opencode--mobile--floating--toggle--only--apk-18A748?style=for-the-badge&logo=android&logoColor=white)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-only/opencode-mobile-floating-toggle-only.apk)
-
-## Why OpenCode Mobile?
-
-- **Stay Connected**: Access your OpenCode server from anywhere on your mobile device
-- **Seamless Conversations**: Pick up where you left off with synchronized chat history
-- **Full Control**: Connect to your own OpenCode server — your data, your rules
-- **Privacy-First**: Keep your conversations private on your self-hosted infrastructure
-- **Fast & Native**: Built with React Native for smooth, responsive performance
-
-## Quick Start
-
-### For Users
-
-1. **Download the app**:
-   - [This fork: Floating Toggle Only Edition APK](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-only/opencode-mobile-floating-toggle-only.apk)
-   - [This fork: No-Memo Chrome Toggle Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-no-memo-chrome-toggle/opencode-mobile-no-memo-chrome-toggle.apk)
-   - [This fork: State-Driven Chrome Toggle Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-state-driven-chrome-toggle/opencode-mobile-state-driven-chrome-toggle.apk)
-   - [This fork: Composer Lift & Chrome Toggle Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-composer-lift-and-chrome-toggle/opencode-mobile-composer-lift-and-chrome-toggle.apk)
-   - [This fork: Floating Toggle & Keyboard Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-floating-toggle-and-keyboard-fixes/opencode-mobile-floating-toggle-and-keyboard-fixes.apk)
-   - [This fork: Chrome Toggle & Gap Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-toggle-and-gap-fixes/opencode-mobile-chrome-toggle-and-gap-fixes.apk)
-   - [This fork: Keyboard Composer & Toggle Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-keyboard-composer-toggle-fixes/opencode-mobile-keyboard-composer-toggle-fixes.apk)
-   - [This fork: Chrome Hide & Keyboard Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-chrome-hide-keyboard-fixes/opencode-mobile-chrome-hide-keyboard-fixes.apk)
-   - [This fork: Font Scale Fixes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-font-scale-fixes/opencode-mobile-font-scale-fixes.apk)
-   - [This fork: Full Color Themes Edition APK (older)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-full-color-themes/opencode-mobile-full-color-themes.apk)
-   - [This fork: Appearance Edition APK (oldest)](https://github.com/RunicKing/opencode-mobile/releases/download/v1.0.10-appearance/opencode-mobile-appearance.apk)
-   - [Google Play (Beta, official upstream)](https://play.google.com/apps/testing/app.getopencode)
-   - [Upstream direct APK](https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk)
-
-2. **Connect to your server**: Open the app and enter your OpenCode server URL (default: `http://ip:4096`)
-
-3. **Start chatting**: Begin conversations with your AI models instantly
-
-### For Developers
-
-Want to build from source or contribute? See the [Development](#development) section below.
-
-## Features
-
-- Real-time chat with your OpenCode models
-- Conversation history and management
-- Multi-model support
-- Custom server configuration
-- Streamed responses for natural conversations
-- Clean, intuitive mobile interface
-
-## Screenshots
-
-Check out screenshots and more details on the [official website](https://getopencode.app/).
+<p align="center">
+  <a href="https://getopencode.app/">Website</a> ·
+  <a href="https://getopencode.app/docs/">Docs</a> ·
+  <a href="https://getopencode.app/support/">Support</a>
+</p>
 
 ---
 
+## OpenCode, without being tied to your laptop
+
+OpenCode Mobile is an independent, community-built mobile companion for [OpenCode](https://opencode.ai/).
+
+It connects to the OpenCode server you already run and gives you a focused mobile control surface for the moments when you need to check, guide, approve, or continue agent work away from your desk.
+
+It is not trying to put a desktop IDE on a smaller screen.
+
+It is designed around the things that actually matter on mobile.
+
+  <video
+     controls
+     playsinline
+     preload="none"
+     min-height="720"
+     src="https://github.com/user-attachments/assets/6da73ca0-d491-45c6-8aee-1f7e494cf602"
+   />
+
+## What you can do
+
+- **Run sessions from your phone** — pick a project, worktree, agent, and model, then send, fork, or revert prompts.
+- **Follow progress live** — reasoning, tool calls, shell output, patches, and todos, with notifications when you're needed.
+- **Approve, review, and edit** — answer permission requests, inspect diffs, browse files, and open terminals.
+- **Talk to it** — dictate prompts, read replies aloud, or use hands-free conversation mode.
+- **Shape your setup** — providers, models, MCP servers, agents, commands, plugins, and visualizations like [Flowgraph](https://github.com/alvarolorentedev/opencode-flowgraph).
+- **Manage and personalize** — multiple servers, projects, and sessions; themes, languages, text size, and widgets.
+
+## How it works
+
+Your code stays on the machine running OpenCode.
+
+OpenCode Mobile connects to that server remotely:
+
+```text
+Your phone
+    │
+    │ HTTPS / secure tunnel
+    ▼
+OpenCode server
+    │
+    ▼
+Your workspace + models
+```
+
+A typical setup looks like this:
+
+### 1. Start OpenCode
+
+```bash
+opencode serve --port 4096
+```
+
+### 2. Expose it securely
+
+Keep the server protected with authentication and connect through a secure HTTPS tunnel, VPN, or reverse proxy.
+
+For example:
+
+```bash
+cloudflared tunnel --url localhost:4096
+```
+
+Tailscale, Cloudflare Tunnel, and other secure networking options work well.
+
+### 3. Connect from OpenCode Mobile
+
+Enter the protected server URL in the app, authenticate, choose your workspace, and continue your sessions.
+
+For the complete setup flow, see the [Getting Started guide](https://getopencode.app/docs/getting-started/).
+
+### 4. Connect an AI provider
+
+Open **Settings → AI & providers → Add provider**, choose your provider,
+select **API key** if multiple login methods are offered, paste the key, and
+save. For OpenCode Go, choose **OpenCode Go** and paste the key from your
+OpenCode console. You can then enable its models and select one in Chat.
+Tap an already configured provider to reopen login or replace its key.
+
+Provider keys are saved on the connected OpenCode server. On OpenCode 2,
+the server's integration catalog determines which providers support API-key
+or OAuth login; environment-only providers must be configured on the server.
+
+## Install
+
+### Android
+
+Recommended:
+
+[**Download from Google Play →**](https://play.google.com/store/apps/details?id=app.getopencode)
+
+Or install the latest APK directly:
+
+[**Download latest APK →**](https://github.com/alvarolorentedev/opencode-mobile/releases/latest/download/opencode-mobile.apk)
+
+### iOS
+
+OpenCode Mobile is currently available through TestFlight:
+
+[**Join the iOS beta →**](https://testflight.apple.com/join/ddcE5Wzz)
+
+For installation details and requirements, visit:
+
+[**getopencode.app/download →**](https://getopencode.app/download/)
+
+## Privacy and control
+
+OpenCode Mobile is designed around self-hosted OpenCode environments.
+
+- Your source code remains on your OpenCode host.
+- The app connects to infrastructure you control.
+- Server credentials are stored using secure device storage where appropriate.
+- You choose how your OpenCode instance is exposed.
+- No hosted OpenCode server is required.
+
+For remote access, prefer authenticated HTTPS, a VPN, or a secure tunnel rather than exposing an unauthenticated OpenCode port directly to the internet.
+
+## Community-built
+
+OpenCode Mobile is not an official OpenCode product. It is not built by the
+OpenCode team, is not endorsed by them, and is not affiliated with them in any
+way.
+
+It is an independent open-source project built for people who already use OpenCode and want to keep their agent workflows reachable when they step away from their desk.
+
+OpenCode and its trademarks belong to their respective owners.
+
 ## Development
 
-OpenCode Mobile is built with Expo and React Native.
+OpenCode Mobile is built with:
 
-### Requirements
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- `@opencode/client` for native OpenCode 2; `@opencode-ai/sdk` isolated to OpenCode 1 compatibility
 
-- Node.js 20+
-- npm
-- Android Studio / Xcode for native builds
+For local development, architecture, testing, and release instructions:
 
-### Getting Started
+[**Read the development guide →**](docs/engineering/development.md)
 
-1. Clone the repository and install dependencies:
-   ```bash
-   git clone https://github.com/alvarolorentedev/opencode-mobile.git
-   cd opencode-mobile
-   npm install
-   ```
+For the full documentation map, architecture, product behavior, design system,
+and decisions:
 
-2. Start the development server:
-   ```bash
-   npm run start
-   ```
+[**Browse the documentation hub →**](docs/README.md)
 
-3. For a development client build:
-   ```bash
-   npm run start:dev-client
-   ```
-
-### Common Commands
+Reusable UI primitives and shared controls are catalogued in Storybook:
 
 ```bash
-npm run lint           # Run linter
-npm run typecheck      # Type checking
-npm run test:e2e:web   # End-to-end tests
-npm run android        # Build Android app
-npm run ios            # Build iOS app
+npm run storybook
 ```
 
-### Android Builds
+## Contributing
 
-Build a production Android release:
-```bash
-npm run build:android
-```
+Contributions are welcome.
 
-Build a development client:
-```bash
-npm run build:development:android
-```
+You can help by:
 
-**Release Automation**:
-- Push to `main` to trigger Android release build and artifact upload
-- Push a version tag (e.g., `v1.2.3`) to trigger production Play Store upload
-- Use `workflow_dispatch` for manual internal-track uploads
+- opening bug reports
+- proposing features
+- improving documentation
+- testing Android and iOS builds
+- submitting pull requests
+- helping reproduce compatibility issues with new OpenCode releases
 
-### Testing
+Read the [contributing guide](CONTRIBUTING.md), [Code of Conduct](CODE_OF_CONDUCT.md),
+[security policy](SECURITY.md), and [support guide](SUPPORT.md). Browse the
+[issue tracker](https://github.com/alvarolorentedev/opencode-mobile/issues) or open a PR.
 
-- Flow validation runs against the fake OpenCode server in `tests/fake-opencode/server.mjs`
-- End-to-end suite uses Playwright (`tests/e2e/flows.spec.mjs`)
-- Full testing strategy documented in `TESTING.md`
+## ⭐ Star History
 
-### Configuration
+<a href="https://www.star-history.com/?repos=alvarolorentedev%2Fopencode-mobile&type=timeline&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=alvarolorentedev/opencode-mobile&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=alvarolorentedev/opencode-mobile&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=alvarolorentedev/opencode-mobile&type=timeline&legend=top-left" />
+ </picture>
+</a>
 
-Connection settings are configured inside the app. By default, the app expects an OpenCode server at `http://127.0.0.1:4096`.
+## ❤️ Support Us
 
-Local configuration files (`.env`, `config.json`) are gitignored for security.
+OpenCode Mobile is free and open source.
+
+If the project is useful to you, you can help support continued development, testing, releases, and infrastructure through:
+
+- GitHub Sponsors
+- Ko-fi
+- PayPal
+- Bitcoin
+- Ethereum
+
+[**Support Us →**](https://getopencode.app/support/)
+
+<a href="https://github.com/alvarolorentedev/opencode-mobile/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=alvarolorentedev/opencode-mobile" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
+---
+
+<p align="center">
+  <strong>Take your next OpenCode session with you.</strong>
+</p>
+
+<p align="center">
+  <a href="https://getopencode.app/">getopencode.app</a>
+</p>

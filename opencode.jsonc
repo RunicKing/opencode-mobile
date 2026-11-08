@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "commands": {
+    "release": {
+      "template": "increase version, version code ios & android, release motes, run npm install, commit, tag and push, follow build until completion , if issues appear solve them, commit, retag and push",
+      "description": "release a new version"
+    },
+    "commit": {
+      "template": "Review the current changes and commit only work belonging to this task. Follow AGENTS.md for validation and conventions. Never include unrelated changes or overwrite concurrent work. Commit with a Conventional Commit message and push directly to main without force. Verify GitHub CI and fix regressions with new commits. Stop and report any conflict or blocker.",
+      "description": "Safely commit and push completed work to main"
+    }
+  }
+}

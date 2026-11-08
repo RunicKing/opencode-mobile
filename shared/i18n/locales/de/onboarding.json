@@ -1,0 +1,91 @@
+{
+  "welcome": {
+    "title": "OpenCode Mobile",
+    "subtitle": "Deine OpenCode-Projekte, wo immer du bist.",
+    "body": "OpenCode Mobile bringt deinen OpenCode-Server auf dein Smartphone. Chatte mit Coding-Agenten, verfolge ihre Arbeit und prüfe Änderungen in deinen Projekten.",
+    "start": "Weiter",
+    "points": {
+      "server": {
+        "title": "Dein Server erledigt die Arbeit",
+        "description": "Modelle und Aufgaben laufen auf deinem OpenCode-Server. Diese App hält dich mit ihm verbunden."
+      },
+      "project": {
+        "title": "Projekte und Unterhaltungen",
+        "description": "Projekte bündeln Chats, Dateien und Änderungen."
+      },
+      "optional": {
+        "title": "Sprache und Aufgaben-Updates",
+        "description": "Spracheingabe und Abschlussbenachrichtigungen helfen dir, unterwegs am Ball zu bleiben."
+      }
+    }
+  },
+  "connect": {
+    "skip": "Überspringen"
+  },
+  "project": {
+    "title": "Projekt wählen",
+    "subtitle": "Wähle ein Projekt zum Starten oder füge einen Ordner auf dem Server hinzu.",
+    "continue": "Weiter",
+    "skip": "Überspringen",
+    "empty": "Dieser Server hat keine Projekte gemeldet. Füge auf dem Server ein Verzeichnis hinzu, um zu beginnen.",
+    "loading": "Projekte werden geladen…",
+    "noMatches": "Keine Projekte passen zu „{{query}}“."
+  },
+  "permissions": {
+    "title": "Berechtigungen",
+    "subtitle": "Optional. OpenCode Mobile fragt nur, wenn du etwas aktivierst.",
+    "skip": "Überspringen",
+    "continue": "Weiter",
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "body": "Erlaube OpenCode Mobile, dich zu benachrichtigen, wenn eine Aufgabe fertig wird, während die App im Hintergrund läuft.",
+      "unsupported": "Benachrichtigungen sind auf dieser Plattform nicht verfügbar.",
+      "enable": "Benachrichtigungen aktivieren",
+      "battery": "Akku- und Hintergrundeinstellungen prüfen"
+    },
+    "voice": {
+      "title": "Spracheingabe",
+      "body": "Mit Mikrofonzugriff kannst du Eingaben diktieren, statt sie zu tippen.",
+      "unsupported": "Spracheingabe ist auf diesem Gerät nicht verfügbar.",
+      "enable": "Spracheingabe aktivieren",
+      "deniedHint": "Du kannst die Spracheingabe später unter Einstellungen › Sprache aktivieren."
+    },
+    "checking": "Wird geprüft …"
+  },
+  "ready": {
+    "title": "Alles bereit",
+    "subtitle": "Prüfe deine Einrichtung und leg los.",
+    "server": "Server",
+    "project": "Projekt",
+    "projectMissing": "Kein Projekt ausgewählt",
+    "footnote": "Du kannst diese Einstellungen jederzeit ändern.",
+    "start": "Loslegen",
+    "done": "Fertig",
+    "serverMissing": "Nicht verbunden",
+    "providers": "Anbieter",
+    "enabledModels": "Aktivierte Modelle"
+  },
+  "settingsAssistant": {
+    "summary": "Berechtigungen, Verbindung, Anbieter, Projekt, Stimme und Einstellungen überprüfen"
+  },
+  "reviewSetup": "Einrichtung prüfen",
+  "stepIndicator": "Schritt {{step}} von {{totalSteps}}",
+  "general": {
+    "title": "Allgemeine Einstellungen",
+    "subtitle": "Passe OpenCode Mobile an deine Wünsche an."
+  },
+  "voice": {
+    "title": "Stimme und Antworten",
+    "subtitle": "Wähle, wie du sprichst und Antworten hörst.",
+    "input": "Spracheingabe",
+    "playback": "Gesprochene Antworten",
+    "responses": "Antwortstil",
+    "autoPlay": "Antworten vorlesen",
+    "confirm": "Befehle bestätigen",
+    "wakeRequired": "Aktivierungsphrase"
+  },
+  "privacy": {
+    "title": "Datenschutz",
+    "subtitle": "Lege fest, was auf diesem Gerät bleibt und was geteilt werden darf."
+  }
+}

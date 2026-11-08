@@ -1,0 +1,387 @@
+# Known Gaps
+
+Deliberately deferred work, with enough context to pick each item up safely.
+These are known structural limits, not bugs. Fixing them changes shape rather
+than behavior, so they should land one at a time with the usual validation.
+
+Any change here that touches `tests/e2e/` or `tests/fake-opencode/` still
+requires explicit human validation under `AGENTS.md`.
+
+## 1. Provider and chat orchestration wiring
+
+Closed on 2026-10-18. The coupling hotspot was split without changing behavior:
+
+- `runtime/composition/opencode-provider.tsx` is now a thin wrapper (~33 lines). The
+  domain hooks and their input spreads moved to
+  `runtime/composition/use-opencode-provider-composition.ts` (~410 lines), and the
+  context-provider tree moved to `runtime/workspace/domain-provider-tree.tsx`.
+- The provider line ratchet in `tests/vitest/architecture.test.ts` dropped from
+  500 to 60 in the same change, so the entrypoint cannot regrow into a god
+  object. The repo-wide 500-line ceiling still covers both new files.
+- `features/chat/ui/chat-view.tsx` renders `TranscriptList`, `ChangesOverlay`,
+  and `PendingInteractions` directly; the `ChatContent` pass-through
+  (`features/chat/ui/chat-view.tsx` and its barrel) is gone.
+- `useChatViewController` returns `header` / `content` / `composer` / `overlay`
+  / `actions` namespaces instead of ~85 flat members, and `ChatView` consumes
+  those namespaces directly.
+
+Remaining deferred piece: a selector-based subscription model. The workspace
+root now memoizes each overridden domain independently, exposes stable chat
+actions separately from the snapshot registry, and memoizes runtime components,
+so background publishes no longer invalidate unrelated domains. A selector-based
+model remains deferred until profiling shows the remaining context fan-out is
+material.
+
+## 2. Test infrastructure leftovers
+
+Partially closed on 2026-10-18:
+
+- **The Playwright specs are split.** The former ~2,300-line
+  `tests/e2e/flows.spec.mjs` is now domain specs (`chat`, `interactions`,
+  `diffs`, `projects`, `sessions`, `realtime`, `settings`, `terminal`, `v2`,
+  `compat`) sharing `tests/e2e/helpers/flows.mjs`. `onboarding.spec.mjs` and
+  `plan-overlay-probe.spec.mjs` reuse the same helpers instead of duplicating
+  them. Test titles are unchanged.
+- **The Vitest suites are fully type-checked.** `tsconfig.tests.json`
+  type-checks every file under `tests/vitest`; `npm run typecheck:tests` (part of
+  `test:ci:static`) runs it. The dynamic `loadTs` / `hookRuntime` harness is
+  described by `tests/helpers/runtime.d.mts`, so suites can use it without
+  weakening compilation. `tests/vitest/typecheck-ratchet.test.ts` prevents a
+  denylist from returning.
+- **`tests/foss-prepare.test.mjs`** stays a standalone Node script
+  (`npm run test:foss`, run by the `ci.yml` static job). It mutates a temporary
+  `node_modules` tree and is build tooling rather than app behavior, so it is
+  deliberately not part of the Vitest include.
+
+### Static release verification limit
+
+Release artifacts are checked statically for signing, package identity, version,
+ARM64-only ABI, native libraries, R8/ProGuard safety, the WorkManager constructor,
+FOSS exclusions and 16 KB page-size alignment. These checks cannot prove that the
+app starts, renders or initializes native modules on a device. Google Play
+internal testing and TestFlight are the real-device validation environments.
+There is no emulator, self-hosted device runner or paid device farm in CI.
+
+## 3. Remote crash reporting
+
+Implemented for sanitized JavaScript errors and performance data through the
+optional OTLP exporter in [observability](../architecture/observability.md).
+Local recording, inspection and export work without an account. Remote telemetry
+is unavailable without build credentials and in FOSS builds.
+
+Remaining gaps:
+
+- native hard crashes and ANRs are not captured because no native telemetry SDK
+  is included; only the next-launch JS crash record is ingested
+- remote Hermes/JavaScript stacks are not symbolicated by the OTLP path; use a
+  local diagnostic export when detailed stacks are needed
+- the bundled OTLP token must be write-only, least-privilege and rotated; any
+  bundled credential can be extracted
+- sending previously recorded local events after consent is deliberately
+  impossible, so enabling remote reporting only affects new events
+
+## 3b. Offline outbox and native 4G validation
+
+The queued-prompt path introduced on 2026-10-23 is intentionally
+process-lifetime. It covers a drop during an active turn and prevents duplicate
+admission after a lost response. It does not send after the app is killed, and
+it does not persist prepared attachment data URLs (the composer draft remains
+the durable copy). A true persistent outbox would need an attachment spool,
+encryption/at-rest policy, and an explicit send-on-reconnect setting.
+
+Web E2E covers injected 4G latency, offline→online queue recovery, and the
+deterministic SSE/polling paths. Native behavior still needs physical-device
+validation on real carrier 4G, Wi-Fi↔cellular handoff, long idle/NAT expiry,
+Android data saver/background restrictions, and iOS background suspension.
+Adding NetInfo and expo-image-manipulator also requires a native build/device
+smoke test before release.
+
+## 4. Transcript merge micro-optimizations
+
+Deferred on 2026-10-18 while the transcript refresh policy was simplified
+(single tail-merge, one 200-record initial window, no backward bridging). The remaining
+render-cost machinery is intentionally untouched because it is not the source of
+the stale/empty-transcript behavior and is harder to validate:
+
+- `mergeSessionMessageWindow` / `prependSessionMessageHistory` keep record object
+  references and use `JSON.stringify` equality so unchanged records skip the
+  tokenization pass (`shared/presentation/format/window.ts`).
+- `toTranscriptEntry` caches entries in a `WeakMap` keyed by record reference.
+- `TranscriptList` re-asserts the FlashList tail across several frames
+  (`TAIL_SETTLE_FRAMES`) and restores offset on focus/foreground.
+
+Revisit only with render profiling evidence, and one mechanism at a time.
+
+## 5. V2 non-message timeline records
+
+Deferred on 2026-10-19. The fixed detailed transcript renders message, tool,
+reasoning, patch, and shell activity, plus user-facing `synthetic` notices.
+The V2 timeline also carries `idle`, `system`, `skill`, `agent-switched`,
+`model-switched`, and `location-switched` records. They are fetched but not
+rendered; most map to empty non-display records. A future non-message timeline
+renderer would map them into transcript details (and would need to decide how
+to present skill/system text). Internal synthetic prompt context (instruction
+loads and mode reminders) also maps to an empty non-display record.
+
+## 6. Gateway headers on direct file reads and browser WebSockets
+
+Closed for the OpenCode data plane on 2026-10-23: per-connection custom headers
+are sent on probes, REST, SSE, terminal connect-token requests and native
+terminal WebSocket upgrades, and values live in SecureStore. Two direct paths
+remain outside that guarantee by design:
+
+- **Attachment previews.** `shared/platform/attachments.ts` fetches attachment `uri`
+  values directly, and those URLs may be arbitrary hosts. Attaching a
+  connection's gateway headers there could leak service-token secrets to a third
+  party, so previews stay header-free until the app can restrict them to the
+  exact server origin. Server-hosted attachments behind Access will fail to
+  preview/open.
+- **WebSocket upgrades on web.** Browser `WebSocket` has no API for custom
+  headers. The terminal still authenticates its ticket request over HTTP with
+  the connection's headers; only the upgrade is header-free. Native builds send
+  the full header set. Web is limited to the development/E2E harness and has no
+  credential persistence, so this is not a production path.
+
+Cloud Link profiles and `opencode pair` QR codes cannot carry custom headers;
+the editor is manual-only. Supporting them would require a control-plane/QR
+contract change, not app-side plumbing.
+
+## 7. V1 support policy
+
+V1 is maintained only for the feature intersection with V2. V1-only surfaces
+(sharing, archive/restore, title summarization, general config writes, persistent
+MCP enablement, worktree reset, and LSP/formatter diagnostics) are intentionally
+unsupported. Compatibility code stays behind `shared/protocol/opencode/compat/v1/` and the
+provider service boundary; do not add new UI branches on `contract === 'v1'`.
+
+Realtime timing and reconciliation helpers live under `runtime/realtime/`.
+Keep the dual SSE/polling model and preserve its timing contract when editing
+them.
+
+## 8. Conversation wake phrase limitations
+
+The wake phrase is a submission gate over the existing OS recognizer, not a
+dedicated wake-word engine. Consequences:
+
+- the recognizer still streams while `armed`, so this does not reduce
+  recognition cost, battery use or vendor audio traffic
+- phrase detection accuracy follows the OS recognizer; contextual biasing and
+  the configurable phrase mitigate but do not eliminate misses
+- conversation mode stops when the app backgrounds, as it did before; the
+  phrase is not an always-on background listener
+- ambient speech that follows a correctly detected phrase is still treated as
+  the command; confirmation (enabled by default) prevents it from being sent
+  without review, but does not identify the speaker
+- `wakePhraseRequired: false` removes the gate entirely: system recognition
+  streams ambient speech to the OS vendor while conversation mode is foregrounded,
+  and every recognized utterance becomes a confirmation candidate. Local mode
+  skips KWS and starts command capture directly. Confirmation, endpointing and
+  speaker verification (when enrolled) are the remaining safeguards.
+
+## 9. Workspace readiness and render-time state
+
+Two render-timing couplings remain in the workspace shell. They are not library
+gaps; they are internal coordination issues worth fixing before the flows grow.
+
+- **Workspace readiness polls React state.** `runtime/workspace/use-workspace-connections.ts`
+  uses `tick()` (a 25 ms `setTimeout`) inside `ensure()`, `connectedWorkspace()`,
+  and `navigate()` to wait for a retained `WorkspaceRuntime` to publish its first
+  snapshot. The wait is bounded at 20 seconds, but it couples navigation to render
+  cadence and can spin while a runtime is suspended or a connection is slow.
+  Replace it with a per-workspace readiness promise or a small event subscription
+  that resolves when the runtime publishes or the workspace is removed. Do not
+  add another shared store; the registry should remain the owner.
+- **Connect pairing changes step during render.**
+  `features/cloud-link/ui/connect-pairing.tsx` derives `step` from provider state,
+  then calls `setStep(4)` or `setStep(3)` directly in the render body (the
+  guided pairing transitions). This can produce React warnings and an extra
+  render pass, and it makes the transition harder to test. Derive the visible
+  step from provider state plus a local override, or move the adjustment into
+  an effect with an explicit guard.
+
+## 10. Extension management boundaries
+
+Extensions are V2-only and edit server-side config files because the native API
+has no durable config/plugin/skill/command mutation surface. Consequences:
+
+- global and project config writes require the V2 shell API for safe global
+  reads and atomic replacement; a server without it is read-only
+- Windows servers are read-only until atomic replacement is verified there
+- there is no config validation endpoint; local JSONC/shape checks are followed
+  by a `config.get` reload check, but server-only normalization warnings are not
+  visible to the client
+- the file replace has no conditional-write API; the provider re-reads the
+  target immediately before rename, but a small race remains
+- plugin installs are asynchronous; a valid config entry can still fail to load
+- file-backed commands and remote-catalog skills are intentionally read-only;
+  built-in plugins, embedded skills, and built-in commands are omitted from the
+  shared list because they are system-managed
+- the V2 command list exposes no provenance, so built-in commands are matched by
+  their upstream name/description pair; new built-ins need that set updated
+- the clean long-term fix is an upstream scoped config-write/validate endpoint
+  and extension file CRUD; the current transaction and shell fallback should be
+  removed once those exist
+
+Deferred library replacements and extraction candidates are documented in
+[library-extraction.md](./library-extraction.md).
+
+## 11. On-device voice limits
+
+The optional local path uses pretrained sherpa-onnx KWS, speaker-embedding,
+Silero VAD, and Moonshine tiny English command models. No model training is
+involved, but the accuracy in heavy TV/child babble has not been benchmarked on
+physical devices yet.
+
+Known limits:
+
+- KWS runs while conversation mode is armed; it does not transcribe the room,
+  but it still owns the microphone and consumes battery. The command ASR is
+  loaded while armed so the post-wake window is not delayed. With
+  `wakePhraseRequired: false`, local mode skips KWS and opens command capture
+  directly; that is more power-hungry and relies on confirmation.
+- The bundled phrases are tokenized at install time and validated against the
+  installed model's `tokens.txt`; arbitrary phrases are not supported without
+  runtime BPE tokenization.
+- Voice verification is an enrollment-time cosine threshold, not a production
+  speaker-verification system. Enrollment now uses speech-only segments and
+  rejects inconsistent clips, but the threshold may still need device-specific
+  tuning. Re-enrollment is required after a major voice change.
+- Target-speaker gating works on non-overlapping turns. Borderline matches get
+  a split-half speaker-consistency check, which discards turns that look like
+  they contain different voices. This is a heuristic, not source separation:
+  simultaneous TV/child speech can still contaminate a turn and be dropped or
+  transcribed imperfectly. A target-speaker extraction model would be needed for
+  a stronger guarantee.
+- Very short turns may be rejected before ASR because the speaker embedding is
+  unreliable below roughly a third of a second. Confirmation capture deliberately
+  skips the per-turn speaker check: the wake and command turns already passed it,
+  and a short "yes" would otherwise be rejected.
+- No-wake mode is foreground-only and relies on confirmation to prevent ambient
+  speech from being sent. With system recognition, ambient speech may reach the
+  vendor's recognizer; the settings warning makes that trade-off explicit.
+- The command ASR defaults to English Moonshine; Whisper tiny multilingual is
+  selectable and does not require training, but its short-command accuracy,
+  latency, and auto-detect behavior are unbenchmarked. The wake phrase remains
+  English because the KWS model is English.
+- The wake-word model pack is roughly 152 MB and the native runtime is
+  prebuilt; both need review for F-Droid packaging/licensing.
+- Reply and confirmation readback use the selected playback engine. The system
+  engine remains the default and always available. On-device playback is opt-in
+  and requires a downloaded pack; capture pauses while TTS speaks, waits for the
+  audio session to settle, and resumes after an echo guard. Barge-in over an
+  active readback is not implemented yet.
+- On-device TTS limits:
+  - Piper ships one English voice plus one voice for Spanish, Hindi, German,
+    French, Simplified Chinese, and Brazilian Portuguese. Japanese stays on the
+    system voice because no Piper voice exists in the pinned release.
+  - Kokoro is English-only and is the larger, more natural option. Its model is
+    roughly 103 MB to download and needs more memory than Piper.
+  - Each pack is a separate download; models are never bundled. Downloads
+    verify byte size and SHA-256, but progress is shown as an indeterminate
+    install state rather than a percentage.
+  - Synthesis runs on the CPU and is serialized. The next chunk is generated
+    while the current one plays, so a slow device may still gap between chunks;
+    the UI falls back to System if the model cannot start.
+  - The model catalog is pinned to upstream sherpa-onnx release assets. Model
+    licensing still needs review for each pack and for F-Droid packaging.
+  - On-device playback is hidden on web; the system voice remains available.
+- The local input path is foreground-only; it does not run with the screen off.
+- Model install/removal and voice enrollment do not yet stop an active local
+  detector. Stop conversation mode before changing the local voice setup.
+- Auto model routing's on-device classifier is not validated on native yet. The
+  Qwen2.5-0.5B Q4_K_M pack is roughly 491 MB, requires a llama.rn New
+  Architecture build, and has only a size/MD5 integrity check (the pinned
+  SHA-256 is documented but cannot be streamed through expo-crypto without
+  loading the whole pack into JS memory). Web has no on-device classifier.
+- Auto-routing tier suggestions use price/context/reasoning metadata as a
+  capability proxy. They do not benchmark model quality or prompt-cache behavior;
+  the long-chat guard is a fixed conservative threshold, not measured savings.
+
+## 11b. Android OEM speech recognition
+
+Android recognizes the system default `RecognitionService`, which on some OEM
+devices is not Google's service. The app now detects a session that never
+reports `start`, retries without continuous capture/punctuation, and then tries
+a visible Google recognizer before surfacing a retryable error. Limits remain:
+
+- an OEM service may still accept the request and never return a result even in
+  compatibility mode; the app shows the start failure instead of looping
+- the Google fallback is only available when `com.google.android.tts` or
+  `com.google.android.googlequicksearchbox` is installed and visible, so FOSS
+  and AOSP devices keep the system default
+- physical-device coverage is still required for Samsung One UI, Xiaomi and
+  other OEM recognizers; the browser suite cannot exercise native speech
+  services
+
+## 12. Custom CA trust limits
+
+Per-connection custom CA trust is native-only. Web and the browser E2E harness
+never expose the certificate control. OpenCode 1 connections and Cloud Link keep
+system trust by design. `expo-file-system` downloads bypass the custom trust;
+API reads, SSE, attachments through `expo/fetch`, and terminal WebSockets are
+covered. Revocation/OCSP is not checked. Non-CA/self-signed anchors pin the exact
+certificate and require re-import on renewal. Native trust behavior needs
+physical-device or simulator validation; CI cannot prove it.
+
+## 13. Vendored sherpa-onnx patch
+
+`@siteed/sherpa-onnx.rn` is pinned to `1.3.1` and patched through
+`patches/@siteed+sherpa-onnx.rn+1.3.1.patch`. Do not bump the package without
+re-checking the patch, the native ABI test, and a physical-device build.
+
+Why the patch exists:
+
+- The Android package bundles the sherpa-onnx 1.13.0 JNI library, whose
+  `OfflineTtsModelConfig` reader expects `zipvoice` and `supertonic` fields. The
+  bundled Kotlin class declared neither, so `initTts` aborted the process with a
+  JNI `NoSuchFieldError` before any model loaded. This affects Piper and Kokoro
+  alike, and downgrading is not a fix: every published 1.x release checked
+  (1.1.x, 1.2.0, 1.3.0, 1.3.1) has the same mismatch. The patch adds both
+  classes and fields in upstream order.
+- The iOS TurboModule bridge forwards `modelType`/`voices`/`lexicon`, while the
+  bundled Swift handler read `ttsModelType`/`voicesFile`/`lexiconFile`. Without
+  the alias patch, on-device playback falls back to the wrong model type and
+  never receives Kokoro voices.
+
+How it is applied:
+
+- `package.json` runs `patch-package` from `postinstall`. A clean
+  `npm install` or `npm ci` installs 1.3.1 and reapplies the patch to
+  `node_modules`. A failed hunk fails the install instead of shipping a broken
+  native build.
+- The changed files are native source, so a JS reload or OTA update is not
+  enough. Rebuild Android/iOS after changing the patch.
+- `shared/platform/voice/__tests__/tts-native-abi.test.ts` asserts the installed Kotlin declares
+  the fields in the expected order and that the patch entry still carries them.
+- The package's `postinstall` downloads the 210 MB prebuilt archive from the
+  upstream GitHub release. `ci.yml` is web-only, so it sets
+  `SITEED_SHERPA_ONNX_ALLOW_MISSING_PREBUILTS=1` and
+  `RNLLAMA_SKIP_POSTINSTALL=1` to skip the sherpa-onnx and llama.rn downloads;
+  both upstream release assets have intermittently returned HTTP 504, which
+  failed `npm ci`. Local native builds and the tag release workflow still
+  require the real prebuilts.
+
+Exit plan:
+
+- `1.3.2-beta.0` contains the Android JNI fix. When a stable release carries it,
+  upgrade, drop the Android hunk, and keep the iOS alias hunk only if the
+  bridge/handler key mismatch is still present. Re-run the native ABI test and
+  validate preview and message playback on a device.
+
+## 14. Project archive is server-automatic
+
+OpenCode archives a project when every known directory has been missing for an
+hour, and resolving the directory again unarchives it. The V2 protocol exposes
+no request that archives or deletes a project on demand: `project.update`
+accepts canonical, name, icon, and commands only. The picker therefore treats
+archived projects as a read-only server state behind a toggle and offers
+restore, not archive. A separate device-local "Archived on this device" marker
+can hide a server project from this picker and restore it, but it never changes
+the server catalog and is not a server archive.
+
+Exit plan:
+
+- If the server adds a project archive/delete endpoint, add it to the V2 client
+  and map the picker action to it with the same destructive confirmation and
+  invalidation as the other project mutations.
+- Do not emulate archive by editing the canonical directory or deleting files.

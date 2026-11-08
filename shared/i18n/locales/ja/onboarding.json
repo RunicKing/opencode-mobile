@@ -1,0 +1,91 @@
+{
+  "welcome": {
+    "title": "OpenCode Mobile",
+    "subtitle": "どこにいても、あなたの OpenCode プロジェクトを。",
+    "body": "OpenCode Mobile は OpenCode サーバーをスマートフォンに届けます。コーディングエージェントとチャットし、作業を追い、プロジェクトの変更を確認できます。",
+    "start": "続ける",
+    "points": {
+      "server": {
+        "title": "作業はサーバーが行います",
+        "description": "モデルとタスクは OpenCode サーバーで実行されます。このアプリはサーバーとの接続を保ちます。"
+      },
+      "project": {
+        "title": "プロジェクトと会話",
+        "description": "プロジェクトはチャット、ファイル、変更をまとめます。"
+      },
+      "optional": {
+        "title": "音声とタスクの更新",
+        "description": "音声入力と完了通知により、外出先でも作業の進行を把握できます。"
+      }
+    }
+  },
+  "connect": {
+    "skip": "スキップ"
+  },
+  "project": {
+    "title": "プロジェクトを選択",
+    "subtitle": "開始するプロジェクトを選ぶか、サーバーにフォルダーを追加してください。",
+    "continue": "続行",
+    "skip": "スキップ",
+    "empty": "このサーバーはプロジェクトを報告していません。開始するにはサーバーにディレクトリを追加してください。",
+    "loading": "プロジェクトを読み込み中…",
+    "noMatches": "「{{query}}」に一致するプロジェクトはありません。"
+  },
+  "permissions": {
+    "title": "権限",
+    "subtitle": "任意です。OpenCode Mobile は、何かを有効にすることを選んだときだけ確認します。",
+    "skip": "スキップ",
+    "continue": "続ける",
+    "notifications": {
+      "title": "通知",
+      "body": "アプリがバックグラウンドにある間にタスクが完了したとき、OpenCode Mobile から通知を受け取れるようにします。",
+      "unsupported": "このプラットフォームでは通知を利用できません。",
+      "enable": "通知を有効にする",
+      "battery": "バッテリーとバックグラウンドの設定を確認"
+    },
+    "voice": {
+      "title": "音声入力",
+      "body": "マイクへのアクセスを許可すると、プロンプトを入力する代わりに音声で入力できます。",
+      "unsupported": "このデバイスでは音声入力を利用できません。",
+      "enable": "音声入力を有効にする",
+      "deniedHint": "音声入力は後から「設定 › 音声」で有効にできます。"
+    },
+    "checking": "確認中…"
+  },
+  "ready": {
+    "title": "準備ができました",
+    "subtitle": "設定を確認してコーディングを始めましょう。",
+    "server": "サーバー",
+    "project": "プロジェクト",
+    "projectMissing": "プロジェクトが選択されていません",
+    "footnote": "これらの設定はいつでも変更できます。",
+    "start": "コーディングを始める",
+    "done": "完了",
+    "serverMissing": "未接続",
+    "providers": "プロバイダー",
+    "enabledModels": "有効なモデル"
+  },
+  "settingsAssistant": {
+    "summary": "権限、接続、プロバイダー、プロジェクト、音声、設定を確認"
+  },
+  "reviewSetup": "設定を確認",
+  "stepIndicator": "ステップ {{step}} / {{totalSteps}}",
+  "general": {
+    "title": "一般設定",
+    "subtitle": "OpenCode Mobileを使いやすく設定しましょう。"
+  },
+  "voice": {
+    "title": "音声と応答",
+    "subtitle": "話しかけ方と応答の読み上げを設定します。",
+    "input": "音声入力",
+    "playback": "応答の読み上げ",
+    "responses": "応答スタイル",
+    "autoPlay": "応答を自動で読み上げる",
+    "confirm": "コマンドを確認",
+    "wakeRequired": "ウェイクフレーズ"
+  },
+  "privacy": {
+    "title": "プライバシー",
+    "subtitle": "このデバイスに残す情報と共有される可能性がある情報を選択します。"
+  }
+}

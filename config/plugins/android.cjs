@@ -1,0 +1,111 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const { mergeContents } = require('@expo/config-plugins/build/utils/generateCode');
+const { withAndroidManifest, withAppBuildGradle, withDangerousMod, withGradleProperties, withMainActivity } = require('@expo/config-plugins');
+// The Expo template defaults to -Xmx2048m -XX:MaxMetaspaceSize=512m, which OOMs
+// during release AAB packaging (bundletool). Raise both so
+// `:app:packageReleaseBundle` has room. The android/ directory is regenerated
+// by `expo prebuild --clean`, so this must live here, not on disk.
+function applyGradleProperties(items, { isDevelopmentVariant = false } = {}) {
+  const overrides = new Set(['org.gradle.jvmargs', 'rnllamaBuildFromSource', 'AsyncStorage_db_size_in_MB', 'org.gradle.caching']);
+  if (!isDevelopmentVariant) overrides.add('reactNativeArchitectures');
+  const next = [
+    ...items.filter((item) => !(item.type === 'property' && overrides.has(item.key))),
+    { type: 'property', key: 'rnllamaBuildFromSource', value: 'false' },
+    {
+      type: 'property',
+      key: 'org.gradle.jvmargs',
+      value: '-Xmx4096m -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8',
+    },
+    // Reuse compiled native outputs between builds. gradle/actions/setup-gradle
+    // persists this local build cache; release tags can only restore caches
+    // warmed from main, so .github/workflows/android-cache.yml keeps it fresh.
+    { type: 'property', key: 'org.gradle.caching', value: 'true' },
+    // AsyncStorage defaults to a 6MB SQLite cap (SQLITE_FULL on profile save); 64MB holds transcript/session caches.
+    { type: 'property', key: 'AsyncStorage_db_size_in_MB', value: '64' },
+  ];
+  if (!isDevelopmentVariant) {
+    next.push({ type: 'property', key: 'reactNativeArchitectures', value: 'arm64-v8a' });
+  }
+  return next;
+}
+
+const withAndroidGradleProperties = (config, options) =>
+  withGradleProperties(config, (config) => {
+    config.modResults = applyGradleProperties(config.modResults, options);
+    return config;
+  });
+
+// expo-camera pulls play-services-code-scanner, whose delegate activity is
+// declared portrait in the library manifest. Android 16 ignores orientation
+// locks on large screens, so Play flags it; override it to follow the system.
+const MLKIT_SCANNER_ACTIVITY =
+  'com.google.mlkit.vision.codescanner.internal.GmsBarcodeScanningDelegateActivity';
+
+function withAndroidAppConfig(
+  config,
+  { isDevelopmentVariant, isFossVariant },
+) {
+  const withSharing = withDangerousMod(config, ['android', async (config) => {
+    const resources = path.join(config.modRequest.projectRoot, 'android/app/src/main/res/raw');
+    fs.mkdirSync(resources, { recursive: true });
+    fs.copyFileSync(path.join(config.modRequest.projectRoot, 'config/plugins/android-sharing-keep.xml'), path.join(resources, 'opencode_sharing_keep.xml'));
+    return config;
+  }]);
+  const withGradle = withAndroidGradleProperties(withSharing, { isDevelopmentVariant });
+  const withManifest = withAndroidManifest(withGradle, (config) => {
+    const application = config.modResults.manifest.application?.[0];
+    if (application && !isFossVariant) {
+      application.activity ??= [];
+      if (!application.activity.some((item) => item.$?.['android:name'] === MLKIT_SCANNER_ACTIVITY)) {
+        application.activity.push({
+          $: {
+            'android:name': MLKIT_SCANNER_ACTIVITY,
+            'android:screenOrientation': 'unspecified',
+            'tools:replace': 'android:screenOrientation',
+          },
+        });
+      }
+    }
+    return config;
+  });
+
+  const withActivity = withMainActivity(withManifest, (config) => {
+    if (config.modResults.language !== 'kt') {
+      throw new Error('The Android content-capture opt-out requires the generated Kotlin MainActivity.');
+    }
+    config.modResults.contents = mergeContents({
+      src: config.modResults.contents,
+      tag: 'opencode-disable-content-capture',
+      anchor: /super\.onCreate\(null\)/,
+      offset: 1,
+      comment: '    //',
+      newSrc: `    // Avoid content-capture accessibility traversals of large text hierarchies.
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+      getSystemService(android.view.contentcapture.ContentCaptureManager::class.java)
+        ?.setContentCaptureEnabled(false)
+    }`,
+    }).contents;
+    return config;
+  });
+
+  if (isDevelopmentVariant) return withActivity;
+
+  return withAppBuildGradle(withActivity, (config) => {
+    let contents = config.modResults.contents;
+    // Router and Screens still pin Material 1.13, which uses deprecated bar-color APIs.
+    const materialPin = "implementation 'com.google.android.material:material:1.14.0'";
+    if (!contents.includes(materialPin)) {
+      const anchor = 'dependencies {';
+      if (!contents.includes(anchor)) {
+        throw new Error('Could not find the Android app dependencies block.');
+      }
+      contents = contents.replace(anchor, `${anchor}\n    ${materialPin}`);
+    }
+
+    config.modResults.contents = contents;
+    return config;
+  });
+}
+
+module.exports = { applyGradleProperties, withAndroidAppConfig };

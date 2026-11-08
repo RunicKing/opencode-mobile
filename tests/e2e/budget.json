@@ -1,0 +1,5 @@
+{
+  "tests": 177,
+  "specs": 19,
+  "justification": "Added one app-updates scenario covering the downloaded restart toast handoff."
+}
